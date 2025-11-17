@@ -16,6 +16,7 @@ interface SalesDataTableProps {
   initialTotalPages: number
   vendedores: string[]
   metodosPago: string[]
+  metodosPago1: string[]
 }
 
 export function SalesDataTable({
@@ -26,6 +27,7 @@ export function SalesDataTable({
   initialTotalPages,
   vendedores,
   metodosPago,
+  metodosPago1,
 }: SalesDataTableProps) {
   const [sales, setSales] = useState<Sale[]>(initialSales)
   const [total, setTotal] = useState(initialTotal)
@@ -95,6 +97,7 @@ export function SalesDataTable({
             onFiltersChange={handleFiltersChange}
             vendedores={vendedores}
             metodosPago={metodosPago}
+            metodosPago1={metodosPago1}
           />
 
           {/* Tabla */}

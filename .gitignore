@@ -40,14 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-#markdown files
-ANALISIS_ARQUITECTURA.md
-DEPENDENCIAS_FALTANTES.md
-INSTRUCCIONES_SETUP.md
-PROGRESO_ACTUAL.md
-RESUMEN_EJECUTIVO.md
-sales_mgmt_docs.md
-SECURITY_WARNINGS.md
-AUTH_FLOW_DOCUMENTATION.md
-IMPLEMENTATION_SUMMARY.md
-SECURITY_WARNINGS_FIX.md
+#files
+markdown/
+query/
+scripts/

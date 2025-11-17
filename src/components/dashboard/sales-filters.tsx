@@ -25,6 +25,7 @@ interface SalesFiltersProps {
   onFiltersChange: (filters: SalesFilters) => void
   vendedores: string[]
   metodosPago: string[]
+  metodosPago1: string[]
 }
 
 export function SalesFilters({
@@ -32,6 +33,7 @@ export function SalesFilters({
   onFiltersChange,
   vendedores,
   metodosPago,
+  metodosPago1,
 }: SalesFiltersProps) {
   const [localFilters, setLocalFilters] = useState<SalesFilters>(filters)
   const [showAdvanced, setShowAdvanced] = useState(false)
@@ -42,7 +44,9 @@ export function SalesFilters({
   }, [filters])
 
   const handleFilterChange = (key: keyof SalesFilters, value: any) => {
-    const newFilters = { ...localFilters, [key]: value || undefined }
+    // Convertir "all" a undefined para limpiar el filtro
+    const cleanValue = value === 'all' || value === '' ? undefined : value
+    const newFilters = { ...localFilters, [key]: cleanValue }
     setLocalFilters(newFilters)
   }
 
@@ -106,7 +110,7 @@ export function SalesFilters({
               <div className="space-y-2">
                 <Label htmlFor="vendedor">Vendedor</Label>
                 <Select
-                  value={localFilters.cel_vendedor || ''}
+                  value={localFilters.cel_vendedor || 'all'}
                   onValueChange={(value) =>
                     handleFilterChange('cel_vendedor', value)
                   }
@@ -115,7 +119,7 @@ export function SalesFilters({
                     <SelectValue placeholder="Todos los vendedores" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos</SelectItem>
+                    <SelectItem value="all">Todos</SelectItem>
                     {vendedores.map((vendedor) => (
                       <SelectItem key={vendedor} value={vendedor}>
                         {vendedor}
@@ -142,7 +146,7 @@ export function SalesFilters({
               <div className="space-y-2">
                 <Label htmlFor="metodo_pago">Método de Pago</Label>
                 <Select
-                  value={localFilters.metodo_pago || ''}
+                  value={localFilters.metodo_pago || 'all'}
                   onValueChange={(value) =>
                     handleFilterChange('metodo_pago', value)
                   }
@@ -151,8 +155,31 @@ export function SalesFilters({
                     <SelectValue placeholder="Todos los métodos" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos</SelectItem>
+                    <SelectItem value="all">Todos</SelectItem>
                     {metodosPago.map((metodo) => (
+                      <SelectItem key={metodo} value={metodo}>
+                        {metodo}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Método de Pago 2 */}
+              <div className="space-y-2">
+                <Label htmlFor="metodo_pago_1">Método de Pago 2</Label>
+                <Select
+                  value={localFilters.metodo_pago_1 || 'all'}
+                  onValueChange={(value) =>
+                    handleFilterChange('metodo_pago_1', value)
+                  }
+                >
+                  <SelectTrigger id="metodo_pago_1">
+                    <SelectValue placeholder="Todos los métodos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos</SelectItem>
+                    {metodosPago1.map((metodo) => (
                       <SelectItem key={metodo} value={metodo}>
                         {metodo}
                       </SelectItem>
@@ -165,7 +192,7 @@ export function SalesFilters({
               <div className="space-y-2">
                 <Label htmlFor="region">Región</Label>
                 <Select
-                  value={localFilters.region || ''}
+                  value={localFilters.region || 'all'}
                   onValueChange={(value) =>
                     handleFilterChange('region', value as 'LIMA' | 'PROVINCIA')
                   }
@@ -174,7 +201,7 @@ export function SalesFilters({
                     <SelectValue placeholder="Todas las regiones" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todas</SelectItem>
+                    <SelectItem value="all">Todas</SelectItem>
                     <SelectItem value="LIMA">LIMA</SelectItem>
                     <SelectItem value="PROVINCIA">PROVINCIA</SelectItem>
                   </SelectContent>
@@ -290,6 +317,18 @@ export function SalesFilters({
                 onClick={() => {
                   handleFilterChange('metodo_pago', '')
                   onFiltersChange({ ...localFilters, metodo_pago: undefined })
+                }}
+              />
+            </Badge>
+          )}
+          {localFilters.metodo_pago_1 && (
+            <Badge variant="secondary" className="gap-1">
+              Pago 2: {localFilters.metodo_pago_1}
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => {
+                  handleFilterChange('metodo_pago_1', '')
+                  onFiltersChange({ ...localFilters, metodo_pago_1: undefined })
                 }}
               />
             </Badge>

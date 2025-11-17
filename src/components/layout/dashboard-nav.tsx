@@ -63,8 +63,8 @@ export function DashboardNav({ role }: DashboardNavProps) {
   )
 
   return (
-    <aside className="hidden w-64 border-r bg-white lg:block">
-      <nav className="flex flex-col gap-1 p-4">
+    <aside className="hidden w-64 border-r bg-background lg:flex lg:flex-col h-screen sticky top-0">
+      <nav className="flex flex-col gap-1 p-4 flex-1 overflow-y-auto">
         {filteredItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href
@@ -76,8 +76,8 @@ export function DashboardNav({ role }: DashboardNavProps) {
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
                 isActive
-                  ? 'bg-blue-50 text-blue-700'
-                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-foreground hover:bg-accent hover:text-accent-foreground'
               )}
             >
               <Icon className="h-5 w-5" />
@@ -88,8 +88,8 @@ export function DashboardNav({ role }: DashboardNavProps) {
       </nav>
 
       {/* Footer del sidebar */}
-      <div className="absolute bottom-0 left-0 right-0 border-t bg-gray-50 p-4">
-        <p className="text-xs text-gray-500 text-center">
+      <div className="border-t bg-muted p-4 mt-auto">
+        <p className="text-xs text-muted-foreground text-center">
           Sistema de Gestión v1.0
         </p>
       </div>

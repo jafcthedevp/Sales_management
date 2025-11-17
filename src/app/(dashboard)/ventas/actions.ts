@@ -8,6 +8,7 @@ export interface SalesFilters {
   cel_vendedor?: string
   numero_cliente?: string
   metodo_pago?: string
+  metodo_pago_1?: string
   region?: 'LIMA' | 'PROVINCIA' | null
   fecha_desde?: string
   fecha_hasta?: string
@@ -65,6 +66,10 @@ export async function getSales(
 
   if (filters.metodo_pago) {
     query = query.ilike('metodo_pago', `%${filters.metodo_pago}%`)
+  }
+
+  if (filters.metodo_pago_1) {
+    query = query.ilike('metodo_pago_1', `%${filters.metodo_pago_1}%`)
   }
 
   if (filters.region) {
@@ -138,13 +143,23 @@ export async function getFilterOptions() {
     .order('metodo_pago')
     .returns<{ metodo_pago: string }[]>()
 
+  // Obtener métodos de pago 2 únicos
+  const { data: metodosPago1 } = await supabase
+    .from('sales')
+    .select('metodo_pago_1')
+    .not('metodo_pago_1', 'is', null)
+    .order('metodo_pago_1')
+    .returns<{ metodo_pago_1: string }[]>()
+
   // Extraer valores únicos
   const vendedoresUnicos = [...new Set(vendedores?.map(v => v.cel_vendedor) || [])]
   const metodosPagoUnicos = [...new Set(metodosPago?.map(m => m.metodo_pago) || [])]
+  const metodosPago1Unicos = [...new Set(metodosPago1?.map(m => m.metodo_pago_1) || [])]
 
   return {
     vendedores: vendedoresUnicos,
     metodosPago: metodosPagoUnicos,
+    metodosPago1: metodosPago1Unicos,
     regiones: ['LIMA', 'PROVINCIA'] as const,
   }
 }

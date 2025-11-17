@@ -35,7 +35,6 @@ export async function login(
   }
 
   const { email, password } = validatedFields.data
-
   const supabase = await createClient()
 
   // Intentar iniciar sesión
@@ -51,36 +50,39 @@ export async function login(
   }
 
   // Verificar que el usuario tenga perfil y esté activo
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
 
-  if (user) {
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('is_active')
-      .eq('id', user.id)
-      .single()
+  if (!user) {
+    await supabase.auth.signOut()
+    return {
+      error: 'Error al obtener información del usuario.',
+    }
+  }
+
+  // Verificar perfil del usuario
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('is_active')
+    .eq('id', user.id)
+    .single()
 
     if (profileError || !profile) {
       await supabase.auth.signOut()
       return {
-        error: 'No se encontró el perfil del usuario. Por favor contacta al administrador.',
+        error: 'No se encontró el perfil del usuario...',
       }
     }
-
-    // TypeScript assertion para el tipo de profile
+    // Type assertion para TypeScript
     const userProfile = profile as { is_active: boolean }
 
     if (!userProfile.is_active) {
       await supabase.auth.signOut()
       return {
-        error: 'Tu cuenta está inactiva. Contacta al administrador.',
+        error: 'Tu cuenta está inactiva...',
       }
     }
-  }
 
-  // Redirigir al dashboard
+  // Login exitoso, redirigir al dashboard
   redirect('/dashboard')
 }
 
