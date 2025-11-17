@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { LogOut, User, Settings } from 'lucide-react'
 import { logout } from '@/app/(auth)/login/actions'
 import type { Profile } from '@/types/database.types'
@@ -34,7 +35,7 @@ export function DashboardHeader({ profile }: DashboardHeaderProps) {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-white shadow-sm">
+    <header className="sticky top-0 z-50 border-b bg-background shadow-sm">
       <div className="flex h-16 items-center justify-between px-6">
         {/* Logo y título */}
         <div className="flex items-center gap-3">
@@ -42,15 +43,18 @@ export function DashboardHeader({ profile }: DashboardHeaderProps) {
             SV
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-gray-900">
+            <h1 className="text-lg font-semibold text-foreground">
               Sistema de Ventas
             </h1>
-            <p className="text-xs text-gray-500">Gestión y análisis</p>
+            <p className="text-xs text-muted-foreground">Gestión y análisis</p>
           </div>
         </div>
 
         {/* Perfil de usuario */}
         <div className="flex items-center gap-4">
+          {/* Toggle de tema */}
+          <ThemeToggle />
+
           {/* Badge de rol */}
           <Badge variant={profile.role === 'admin' ? 'default' : 'secondary'}>
             {profile.role === 'admin' ? 'Administrador' : 'Contador'}

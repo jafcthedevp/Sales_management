@@ -64,6 +64,7 @@ async function SalesContent() {
         initialTotalPages={salesResponse.totalPages}
         vendedores={filterOptions.vendedores}
         metodosPago={filterOptions.metodosPago}
+        metodosPago1={filterOptions.metodosPago1}
       />
     </div>
   )
