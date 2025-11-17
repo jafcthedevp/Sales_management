@@ -60,16 +60,19 @@ export async function login(
       .from('profiles')
       .select('is_active')
       .eq('id', user.id)
-      .single<{ is_active: boolean }>()
+      .single()
 
-    if (profileError) {
+    if (profileError || !profile) {
       await supabase.auth.signOut()
       return {
         error: 'No se encontró el perfil del usuario. Por favor contacta al administrador.',
       }
     }
 
-    if (profile?.is_active === false) {
+    // TypeScript assertion para el tipo de profile
+    const userProfile = profile as { is_active: boolean }
+
+    if (!userProfile.is_active) {
       await supabase.auth.signOut()
       return {
         error: 'Tu cuenta está inactiva. Contacta al administrador.',

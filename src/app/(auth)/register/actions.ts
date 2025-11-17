@@ -85,15 +85,17 @@ export async function register(
   if (profileError || !profile) {
     console.log('Trigger no ejecutado, creando perfil manualmente para usuario:', data.user.id)
 
+    const profileData = {
+      id: data.user.id,
+      email: email,
+      full_name: fullName,
+      role: 'contador' as const,
+      is_active: true,
+    }
+
     const { data: newProfile, error: createError } = await supabase
       .from('profiles')
-      .insert({
-        id: data.user.id,
-        email: email,
-        full_name: fullName,
-        role: 'contador',
-        is_active: true,
-      })
+      .insert(profileData as any)
       .select()
       .single()
 
