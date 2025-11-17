@@ -66,20 +66,21 @@ export async function login(
     .eq('id', user.id)
     .single()
 
-  if (profileError || !profile) {
-    console.error('Error al verificar perfil:', profileError)
-    await supabase.auth.signOut()
-    return {
-      error: 'No se encontró el perfil del usuario. Contacta al administrador.',
+    if (profileError || !profile) {
+      await supabase.auth.signOut()
+      return {
+        error: 'No se encontró el perfil del usuario...',
+      }
     }
-  }
+    // Type assertion para TypeScript
+    const userProfile = profile as { is_active: boolean }
 
-  if (!profile.is_active) {
-    await supabase.auth.signOut()
-    return {
-      error: 'Tu cuenta está inactiva. Contacta al administrador.',
+    if (!userProfile.is_active) {
+      await supabase.auth.signOut()
+      return {
+        error: 'Tu cuenta está inactiva...',
+      }
     }
-  }
 
   // Login exitoso, redirigir al dashboard
   redirect('/dashboard')
