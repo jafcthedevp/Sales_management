@@ -35,25 +35,25 @@ export function UsersTable({ users, currentUserId }: UsersTableProps) {
     }
   }
 
-  const getRoleBadgeVariant = (role: string) => {
+  const getRoleBadgeVariant = (role: string | null) => {
     switch (role) {
       case 'admin':
         return 'default'
-      case 'user':
+      case 'contador':
         return 'secondary'
       default:
         return 'outline'
     }
   }
 
-  const getRoleLabel = (role: string) => {
+  const getRoleLabel = (role: string | null) => {
     switch (role) {
       case 'admin':
         return 'Administrador'
-      case 'user':
-        return 'Usuario'
+      case 'contador':
+        return 'Contador'
       default:
-        return role
+        return role || 'Sin rol'
     }
   }
 
@@ -119,8 +119,8 @@ export function UsersTable({ users, currentUserId }: UsersTableProps) {
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Switch
-                              checked={user.is_active}
-                              onCheckedChange={() => handleToggleActive(user.id, user.is_active)}
+                              checked={user.is_active ?? false}
+                              onCheckedChange={() => handleToggleActive(user.id, user.is_active ?? false)}
                               disabled={isCurrentUser}
                             />
                             <span className="text-sm">
@@ -129,7 +129,7 @@ export function UsersTable({ users, currentUserId }: UsersTableProps) {
                           </div>
                         </TableCell>
                         <TableCell className="text-sm">
-                          {format(new Date(user.created_at), 'dd/MM/yyyy', { locale: es })}
+                          {user.created_at ? format(new Date(user.created_at), 'dd/MM/yyyy', { locale: es }) : 'N/A'}
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">

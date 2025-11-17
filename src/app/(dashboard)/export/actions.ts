@@ -151,8 +151,11 @@ export async function exportSales(options: ExportOptions): Promise<ExportResult>
     await supabase.from('export_logs').insert({
       exported_by: profile.id,
       records_count: data.length,
-      filters: options.filters,
-      columns: options.columns,
+      filters_applied: {
+        ...options.filters,
+        columns: options.columns,
+      },
+      filename: fileName,
     })
 
     return {
@@ -184,8 +187,8 @@ export async function getExportLogs() {
       id,
       created_at,
       records_count,
-      filters,
-      columns,
+      filters_applied,
+      filename,
       exported_by_profile:profiles!export_logs_exported_by_fkey(
         full_name,
         email

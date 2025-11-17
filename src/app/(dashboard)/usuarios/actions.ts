@@ -9,11 +9,11 @@ import type { UserRole } from '@/types/database.types'
 export interface UserProfile {
   id: string
   email: string
-  full_name: string
-  role: UserRole
-  is_active: boolean
-  created_at: string
-  updated_at: string
+  full_name: string | null
+  role: string | null
+  is_active: boolean | null
+  created_at: string | null
+  updated_at: string | null
 }
 
 export interface CreateUserData {
@@ -111,7 +111,7 @@ export async function createUser(userData: CreateUserData) {
           id: authData.user.id,
           email: userData.email,
           full_name: userData.full_name,
-          role: userData.role,
+          role: userData.role as string,
           is_active: true,
         })
 
@@ -153,12 +153,17 @@ export async function updateUser(userId: string, userData: UpdateUserData) {
   const supabase = await createClient()
 
   try {
+    const updateData: Record<string, any> = {
+      updated_at: new Date().toISOString(),
+    }
+
+    if (userData.full_name !== undefined) updateData.full_name = userData.full_name
+    if (userData.role !== undefined) updateData.role = userData.role as string
+    if (userData.is_active !== undefined) updateData.is_active = userData.is_active
+
     const { error } = await supabase
       .from('profiles')
-      .update({
-        ...userData,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq('id', userId)
 
     if (error) {
@@ -256,7 +261,10 @@ export async function toggleUserActive(userId: string, isActive: boolean) {
   try {
     const { error } = await supabase
       .from('profiles')
-      .update({ is_active: isActive, updated_at: new Date().toISOString() })
+      .update({
+        is_active: isActive,
+        updated_at: new Date().toISOString()
+      } as any)
       .eq('id', userId)
 
     if (error) {

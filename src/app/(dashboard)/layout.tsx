@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { getUserProfile } from '@/lib/dal'
 import { DashboardNav } from '@/components/layout/dashboard-nav'
 import { DashboardHeader } from '@/components/layout/dashboard-header'
+import type { UserRole } from '@/types/database.types'
 
 export const metadata: Metadata = {
   title: 'Dashboard - Sistema de Gestión de Ventas',
@@ -30,7 +31,7 @@ export default async function DashboardLayout({
 
       <div className="flex">
         {/* Sidebar de navegación */}
-        <DashboardNav role={profile.role} />
+        <DashboardNav role={(profile.role || 'contador') as UserRole} />
 
         {/* Contenido principal */}
         <main className="flex-1 p-6 lg:p-8">

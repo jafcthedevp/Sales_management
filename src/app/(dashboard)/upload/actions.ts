@@ -9,8 +9,8 @@ type SaleInsert = Database['public']['Tables']['sales']['Insert']
 
 // Esquema de validación para cada fila del Excel
 const saleRowSchema = z.object({
-  cel_vendedor: z.string().optional().nullable(),
-  numero_cliente: z.string().optional().nullable(),
+  cel_vendedor: z.string().min(1, 'CEL vendedor requerido'),
+  numero_cliente: z.string().min(1, 'Número cliente requerido'),
   nombre_cliente: z.string().optional().nullable(),
   metodo_pago: z.string().min(1, 'Método de pago requerido'),
   metodo_pago_1: z.string().optional().nullable(),
@@ -87,7 +87,7 @@ export async function uploadSalesData(
       if (error instanceof z.ZodError) {
         errors.push({
           row: index + 2, // +2 porque Excel empieza en 1 y tiene header
-          error: error.errors.map((e) => e.message).join(', '),
+          error: error.issues.map((e: z.ZodIssue) => e.message).join(', '),
           data: row,
         })
       } else {
