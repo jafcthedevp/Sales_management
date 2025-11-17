@@ -151,9 +151,8 @@ export async function exportSales(options: ExportOptions): Promise<ExportResult>
     await supabase.from('export_logs').insert({
       exported_by: profile.id,
       records_count: data.length,
-      filters: options.filters,
-      columns: options.columns,
-    })
+      filters_applied: options.filters,
+    } as any)
 
     return {
       success: true,

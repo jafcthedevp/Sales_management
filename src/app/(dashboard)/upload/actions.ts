@@ -81,13 +81,15 @@ export async function uploadSalesData(
 
       validSales.push({
         ...validatedRow,
+        cel_vendedor: validatedRow.cel_vendedor || '',
+        numero_cliente: validatedRow.numero_cliente || '',
         created_by: user.id,
-      })
+      } as any)
     } catch (error) {
       if (error instanceof z.ZodError) {
         errors.push({
           row: index + 2, // +2 porque Excel empieza en 1 y tiene header
-          error: error.errors.map((e) => e.message).join(', '),
+          error: error.issues.map((e: any) => e.message).join(', '),
           data: row,
         })
       } else {
@@ -121,7 +123,7 @@ export async function uploadSalesData(
 
     const { data, error } = await supabase
       .from('sales')
-      .insert(batch)
+      .insert(batch as any)
       .select()
 
     if (error) {
@@ -149,7 +151,7 @@ export async function uploadSalesData(
       error_count: errors.length,
       errors_detail: errors.length > 0 ? errors : null,
       status: errors.length === 0 ? 'completed' : errors.length < salesData.length ? 'partial' : 'failed',
-    })
+    } as any)
 
   if (logError) {
     console.error('Error creating upload log:', logError)

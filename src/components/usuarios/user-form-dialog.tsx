@@ -19,6 +19,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-react'
 import { createUser, updateUser } from '@/app/(dashboard)/usuarios/actions'
 import type { UserProfile } from '@/app/(dashboard)/usuarios/actions'
+import type { UserRole } from '@/types/database.types'
 
 interface UserFormDialogProps {
   open: boolean
@@ -36,7 +37,7 @@ export function UserFormDialog({ open, onOpenChange, mode, user }: UserFormDialo
   const [email, setEmail] = useState(user?.email || '')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState(user?.full_name || '')
-  const [role, setRole] = useState<'admin' | 'user'>(user?.role || 'user')
+  const [role, setRole] = useState<UserRole>(user?.role || 'contador')
   const [isActive, setIsActive] = useState(user?.is_active ?? true)
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -153,12 +154,12 @@ export function UserFormDialog({ open, onOpenChange, mode, user }: UserFormDialo
           {/* Rol */}
           <div className="space-y-2">
             <Label htmlFor="role">Rol</Label>
-            <Select value={role} onValueChange={(value) => setRole(value as 'admin' | 'user')}>
+            <Select value={role} onValueChange={(value) => setRole(value as UserRole)}>
               <SelectTrigger id="role">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="user">Usuario</SelectItem>
+                <SelectItem value="contador">Contador</SelectItem>
                 <SelectItem value="admin">Administrador</SelectItem>
               </SelectContent>
             </Select>

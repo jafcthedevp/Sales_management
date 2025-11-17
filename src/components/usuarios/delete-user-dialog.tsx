@@ -72,7 +72,7 @@ export function DeleteUserDialog({ open, onOpenChange, user }: DeleteUserDialogP
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isPending}>Cancelar</AlertDialogCancel>
           <AlertDialogAction
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               e.preventDefault()
               handleDelete()
             }}

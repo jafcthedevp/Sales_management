@@ -111,9 +111,9 @@ export async function createUser(userData: CreateUserData) {
           id: authData.user.id,
           email: userData.email,
           full_name: userData.full_name,
-          role: userData.role,
+          role: userData.role as 'admin' | 'contador',
           is_active: true,
-        })
+        } as any)
 
       if (insertError) {
         console.error('Error creating profile manually:', insertError)
@@ -155,6 +155,7 @@ export async function updateUser(userId: string, userData: UpdateUserData) {
   try {
     const { error } = await supabase
       .from('profiles')
+      // @ts-ignore - Supabase typing issue with update
       .update({
         ...userData,
         updated_at: new Date().toISOString(),
@@ -256,6 +257,7 @@ export async function toggleUserActive(userId: string, isActive: boolean) {
   try {
     const { error } = await supabase
       .from('profiles')
+      // @ts-ignore - Supabase typing issue with update
       .update({ is_active: isActive, updated_at: new Date().toISOString() })
       .eq('id', userId)
 
