@@ -71,14 +71,44 @@ export async function register(
   }
 
   // El trigger de la base de datos debería crear el perfil automáticamente
+  // Esperar un momento para que el trigger se ejecute
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+
   // Verificar que se creó correctamente
-  const { data: profile, error: profileError } = await supabase
+  let { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', data.user.id)
     .single()
 
+  // Si el trigger no funcionó, crear el perfil manualmente
   if (profileError || !profile) {
+    console.log('Trigger no ejecutado, creando perfil manualmente para usuario:', data.user.id)
+
+    const { data: newProfile, error: createError } = await supabase
+      .from('profiles')
+      .insert({
+        id: data.user.id,
+        email: email,
+        full_name: fullName,
+        role: 'contador',
+        is_active: true,
+      })
+      .select()
+      .single()
+
+    if (createError) {
+      console.error('Error al crear perfil manualmente:', createError)
+      return {
+        error:
+          'Error al crear el perfil del usuario. Detalle: ' + createError.message,
+      }
+    }
+
+    profile = newProfile
+  }
+
+  if (!profile) {
     return {
       error: 'Error al crear el perfil del usuario',
     }
