@@ -25,7 +25,7 @@ export function LoginForm() {
         <form action={formAction} className="space-y-4">
           {/* Mostrar error si existe */}
           {state.error && (
-            <div className="flex items-center gap-2 rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-800">
+            <div className="flex items-center gap-2 rounded-lg bg-destructive/10 border border-destructive/50 p-3 text-sm text-destructive">
               <AlertCircle className="h-4 w-4" />
               <p>{state.error}</p>
             </div>
@@ -37,7 +37,7 @@ export function LoginForm() {
               Email
             </Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 id="email"
                 name="email"
@@ -57,7 +57,7 @@ export function LoginForm() {
               Contraseña
             </Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 id="password"
                 name="password"

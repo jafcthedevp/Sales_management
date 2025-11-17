@@ -36,7 +36,8 @@ export interface UploadResult {
  * Procesar y guardar datos del Excel
  */
 export async function uploadSalesData(
-  salesData: any[]
+  salesData: any[],
+  fechaReporte: string
 ): Promise<UploadResult> {
   // Verificar que el usuario sea admin
   const user = await verifyAdmin()
@@ -82,6 +83,7 @@ export async function uploadSalesData(
       validSales.push({
         ...validatedRow,
         created_by: user.id,
+        fecha_reporte: fechaReporte,
       })
     } catch (error) {
       if (error instanceof z.ZodError) {

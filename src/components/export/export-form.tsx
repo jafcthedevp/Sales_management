@@ -8,14 +8,15 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Download, CheckCircle2, AlertTriangle } from 'lucide-react'
-import { exportSales } from '@/app/(dashboard)/export/actions'
+import { Download, CheckCircle2, AlertTriangle, Calculator } from 'lucide-react'
+import { exportSales, getSalesSummary } from '@/app/(dashboard)/export/actions'
 import { getFilterOptions } from '@/app/(dashboard)/ventas/actions'
 import type { SalesFilters } from '@/app/(dashboard)/ventas/actions'
 
 interface FilterOptionsData {
   vendedores: string[]
   metodosPago: string[]
+  metodosPago1: string[]
   regiones: readonly string[]
 }
 
@@ -28,7 +29,8 @@ const AVAILABLE_COLUMNS = [
   { id: 'metodo_pago_1', label: 'MÉTODO PAGO 1', default: false },
   { id: 'monto', label: 'MONTO', default: true },
   { id: 'region', label: 'REGIÓN', default: true },
-  { id: 'fecha_venta', label: 'FECHA VENTA', default: true },
+  { id: 'fecha_reporte', label: 'FECHA REPORTE', default: true },
+  { id: 'fecha_venta', label: 'FECHA VENTA', default: false },
   { id: 'created_at', label: 'FECHA CREACIÓN', default: false },
   { id: 'updated_at', label: 'FECHA ACTUALIZACIÓN', default: false },
 ]
@@ -42,9 +44,12 @@ export function ExportForm() {
   const [filterOptions, setFilterOptions] = useState<FilterOptionsData>({
     vendedores: [],
     metodosPago: [],
+    metodosPago1: [],
     regiones: ['LIMA', 'PROVINCIA'] as const,
   })
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null)
+  const [summary, setSummary] = useState<{ count: number; total: number; average: number } | null>(null)
+  const [isLoadingSummary, setIsLoadingSummary] = useState(false)
 
   // Cargar opciones de filtros
   useEffect(() => {
@@ -67,6 +72,19 @@ export function ExportForm() {
 
   const handleDeselectAllColumns = () => {
     setSelectedColumns([])
+  }
+
+  const handleCalculateSummary = async () => {
+    setIsLoadingSummary(true)
+    try {
+      const summaryData = await getSalesSummary(filters)
+      setSummary(summaryData)
+    } catch (error) {
+      console.error('Error calculating summary:', error)
+      setSummary(null)
+    } finally {
+      setIsLoadingSummary(false)
+    }
   }
 
   const handleExport = () => {
@@ -183,6 +201,29 @@ export function ExportForm() {
                 <SelectContent>
                   <SelectItem value="all">Todos los métodos</SelectItem>
                   {filterOptions.metodosPago.map((metodo) => (
+                    <SelectItem key={metodo} value={metodo}>
+                      {metodo}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Método de Pago 1 */}
+            <div className="space-y-2">
+              <Label htmlFor="metodo-pago-1">Método de Pago 1</Label>
+              <Select
+                value={filters.metodo_pago_1 || 'all'}
+                onValueChange={(value) =>
+                  setFilters({ ...filters, metodo_pago_1: value === 'all' ? undefined : value })
+                }
+              >
+                <SelectTrigger id="metodo-pago-1">
+                  <SelectValue placeholder="Todos los métodos" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos los métodos</SelectItem>
+                  {filterOptions.metodosPago1.map((metodo) => (
                     <SelectItem key={metodo} value={metodo}>
                       {metodo}
                     </SelectItem>
@@ -317,6 +358,48 @@ export function ExportForm() {
           <p className="text-sm text-muted-foreground">
             {selectedColumns.length} columna(s) seleccionada(s)
           </p>
+        </CardContent>
+      </Card>
+
+      {/* Resumen de Datos */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Resumen de Datos</CardTitle>
+          <CardDescription>
+            Visualiza el total de dinero antes de exportar
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Button
+            onClick={handleCalculateSummary}
+            disabled={isLoadingSummary}
+            variant="outline"
+            className="w-full"
+          >
+            <Calculator className="mr-2 h-4 w-4" />
+            {isLoadingSummary ? 'Calculando...' : 'Calcular Resumen'}
+          </Button>
+
+          {summary && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="rounded-lg border bg-card p-4 text-center">
+                <p className="text-sm text-muted-foreground">Registros</p>
+                <p className="text-2xl font-bold">{summary.count.toLocaleString('es-PE')}</p>
+              </div>
+              <div className="rounded-lg border bg-card p-4 text-center">
+                <p className="text-sm text-muted-foreground">Total</p>
+                <p className="text-2xl font-bold text-primary">
+                  S/. {summary.total.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </p>
+              </div>
+              <div className="rounded-lg border bg-card p-4 text-center">
+                <p className="text-sm text-muted-foreground">Promedio</p>
+                <p className="text-2xl font-bold">
+                  S/. {summary.average.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </p>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 

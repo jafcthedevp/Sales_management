@@ -3,10 +3,12 @@
 import { useState, useTransition } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { AlertCircle, Upload, X } from 'lucide-react'
+import { AlertCircle, Upload, X, Calendar } from 'lucide-react'
 import { uploadSalesData } from '@/app/(dashboard)/upload/actions'
 import type { ParsedSale } from './upload-content'
 
@@ -20,12 +22,22 @@ interface PreviewTableProps {
 
 export function PreviewTable({ data, onUpload, onCancel, isUploading, setIsUploading }: PreviewTableProps) {
   const [isPending, startTransition] = useTransition()
+  const [fechaReporte, setFechaReporte] = useState(() => {
+    // Por defecto, la fecha de hoy en formato YYYY-MM-DD
+    const today = new Date()
+    return today.toISOString().split('T')[0]
+  })
 
   const handleUpload = () => {
+    if (!fechaReporte) {
+      alert('Por favor selecciona la fecha del reporte')
+      return
+    }
+
     setIsUploading(true)
     startTransition(async () => {
       try {
-        const result = await uploadSalesData(data)
+        const result = await uploadSalesData(data, fechaReporte)
         onUpload(result)
       } catch (error) {
         console.error('Error uploading:', error)
@@ -62,6 +74,33 @@ export function PreviewTable({ data, onUpload, onCancel, isUploading, setIsUploa
             Mostrando {previewData.length} de {data.length} registros. Verifica que los datos sean correctos antes de continuar.
           </AlertDescription>
         </Alert>
+
+        {/* Selector de Fecha del Reporte */}
+        <Card className="bg-muted/50 border-primary/20">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-4">
+              <Calendar className="h-5 w-5 text-primary" />
+              <div className="flex-1 space-y-2">
+                <Label htmlFor="fecha-reporte" className="text-base font-semibold">
+                  Fecha del Reporte
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  Selecciona la fecha a la que pertenecen estos datos (no la fecha de hoy)
+                </p>
+              </div>
+              <div className="w-48">
+                <Input
+                  id="fecha-reporte"
+                  type="date"
+                  value={fechaReporte}
+                  onChange={(e) => setFechaReporte(e.target.value)}
+                  className="text-base font-medium"
+                  required
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="rounded-md border overflow-x-auto">
           <Table>

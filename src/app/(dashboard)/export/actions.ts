@@ -53,6 +53,10 @@ export async function exportSales(options: ExportOptions): Promise<ExportResult>
       query = query.ilike('metodo_pago', `%${options.filters.metodo_pago}%`)
     }
 
+    if (options.filters.metodo_pago_1) {
+      query = query.ilike('metodo_pago_1', `%${options.filters.metodo_pago_1}%`)
+    }
+
     if (options.filters.region) {
       query = query.eq('region', options.filters.region)
     }
@@ -104,6 +108,7 @@ export async function exportSales(options: ExportOptions): Promise<ExportResult>
       metodo_pago_1: 'MÉTODO PAGO 1',
       monto: 'MONTO',
       region: 'REGIÓN',
+      fecha_reporte: 'FECHA REPORTE',
       fecha_venta: 'FECHA VENTA',
       created_at: 'FECHA CREACIÓN',
       updated_at: 'FECHA ACTUALIZACIÓN',
@@ -172,6 +177,91 @@ export async function exportSales(options: ExportOptions): Promise<ExportResult>
       message: 'Error al exportar los datos',
       error: err instanceof Error ? err.message : 'Error desconocido',
     }
+  }
+}
+
+/**
+ * Obtener resumen de datos filtrados (sin exportar)
+ */
+export async function getSalesSummary(filters: SalesFilters) {
+  try {
+    const supabase = await createClient()
+
+    // Construir query con los mismos filtros que exportSales
+    let query = supabase.from('sales').select('monto')
+
+    // Aplicar los mismos filtros
+    if (filters.search) {
+      query = query.or(
+        `cel_vendedor.ilike.%${filters.search}%,` +
+        `numero_cliente.ilike.%${filters.search}%,` +
+        `nombre_cliente.ilike.%${filters.search}%,` +
+        `metodo_pago.ilike.%${filters.search}%`
+      )
+    }
+
+    if (filters.cel_vendedor) {
+      query = query.ilike('cel_vendedor', `%${filters.cel_vendedor}%`)
+    }
+
+    if (filters.numero_cliente) {
+      query = query.ilike('numero_cliente', `%${filters.numero_cliente}%`)
+    }
+
+    if (filters.metodo_pago) {
+      query = query.ilike('metodo_pago', `%${filters.metodo_pago}%`)
+    }
+
+    if (filters.metodo_pago_1) {
+      query = query.ilike('metodo_pago_1', `%${filters.metodo_pago_1}%`)
+    }
+
+    if (filters.region) {
+      query = query.eq('region', filters.region)
+    }
+
+    if (filters.fecha_desde) {
+      query = query.gte('fecha_venta', filters.fecha_desde)
+    }
+
+    if (filters.fecha_hasta) {
+      query = query.lte('fecha_venta', filters.fecha_hasta)
+    }
+
+    if (filters.monto_min !== undefined) {
+      query = query.gte('monto', filters.monto_min)
+    }
+
+    if (filters.monto_max !== undefined) {
+      query = query.lte('monto', filters.monto_max)
+    }
+
+    const { data, error } = await query
+
+    if (error) {
+      console.error('Error fetching summary:', error)
+      return null
+    }
+
+    if (!data || data.length === 0) {
+      return {
+        count: 0,
+        total: 0,
+        average: 0,
+      }
+    }
+
+    const total = data.reduce((sum, sale) => sum + (sale.monto || 0), 0)
+    const average = total / data.length
+
+    return {
+      count: data.length,
+      total,
+      average,
+    }
+  } catch (err) {
+    console.error('Error in getSalesSummary:', err)
+    return null
   }
 }
 

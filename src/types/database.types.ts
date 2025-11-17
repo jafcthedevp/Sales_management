@@ -89,6 +89,7 @@ export type Database = {
           cel_vendedor: string
           created_at: string | null
           created_by: string | null
+          fecha_reporte: string | null
           fecha_venta: string | null
           id: string
           metodo_pago: string
@@ -103,6 +104,7 @@ export type Database = {
           cel_vendedor: string
           created_at?: string | null
           created_by?: string | null
+          fecha_reporte?: string | null
           fecha_venta?: string | null
           id?: string
           metodo_pago: string
@@ -117,6 +119,7 @@ export type Database = {
           cel_vendedor?: string
           created_at?: string | null
           created_by?: string | null
+          fecha_reporte?: string | null
           fecha_venta?: string | null
           id?: string
           metodo_pago?: string

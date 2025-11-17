@@ -33,7 +33,7 @@ export function RegisterForm() {
           )}
 
           {state.success && (
-            <Alert className="border-green-500 bg-green-50 text-green-900">
+            <Alert className="border-primary/50 bg-primary/10 text-primary">
               <CheckCircle2 className="h-4 w-4" />
               <AlertDescription>{state.message}</AlertDescription>
             </Alert>
