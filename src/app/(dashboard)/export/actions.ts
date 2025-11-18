@@ -124,7 +124,10 @@ export async function exportSales(options: ExportOptions): Promise<ExportResult>
         if (col === 'monto' && typeof value === 'number') {
           mappedRow[label] = value
         } else if (col === 'fecha_reporte' && value) {
-          mappedRow[label] = new Date(value as string).toLocaleDateString('es-PE')
+          // Parsear como fecha local para evitar problemas de zona horaria
+          const [year, month, day] = (value as string).split('-').map(Number)
+          const fechaLocal = new Date(year, month - 1, day)
+          mappedRow[label] = fechaLocal.toLocaleDateString('es-PE')
         } else if ((col === 'created_at' || col === 'updated_at') && value) {
           mappedRow[label] = new Date(value as string).toLocaleString('es-PE')
         } else {

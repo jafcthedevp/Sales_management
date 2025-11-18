@@ -178,9 +178,13 @@ export function SalesTable({
         if (!fecha) return <span className="text-muted-foreground text-sm">-</span>
 
         try {
+          // Parsear fecha como fecha local (sin conversión de zona horaria)
+          const [year, month, day] = fecha.split('-').map(Number)
+          const fechaLocal = new Date(year, month - 1, day)
+
           return (
             <div className="text-sm font-medium text-primary">
-              {format(new Date(fecha), 'dd/MM/yyyy', { locale: es })}
+              {format(fechaLocal, 'dd/MM/yyyy', { locale: es })}
             </div>
           )
         } catch {
