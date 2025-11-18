@@ -44,11 +44,11 @@ export function UploadContent() {
   }
 
   return (
-    <div className="space-y-4">
-      <Alert>
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          Solo los administradores pueden cargar archivos Excel. El formato debe incluir las columnas: CEL VENDEDOR, NÚMERO CLIENTE, MÉTODO PAGO, MONTO, REGIÓN.
+    <div className="space-y-6">
+      <Alert className="shadow-md">
+        <AlertCircle className="h-5 w-5" />
+        <AlertDescription className="text-base">
+          Solo los administradores pueden cargar archivos Excel. El formato debe incluir las columnas: <strong>CEL VENDEDOR, NÚMERO CLIENTE, MÉTODO PAGO, MONTO, REGIÓN</strong>.
         </AlertDescription>
       </Alert>
 

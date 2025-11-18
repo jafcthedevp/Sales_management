@@ -102,11 +102,11 @@ export async function uploadSalesData(
     }
   })
 
-  // Si no hay datos válidos, retornar error
-  if (validSales.length === 0) {
+  // ⚠️ TODO O NADA: Si hay aunque sea 1 error, rechazar toda la carga
+  if (errors.length > 0) {
     return {
       success: false,
-      message: 'No se encontraron datos válidos para importar',
+      message: `Validación fallida: ${errors.length} error(es) encontrado(s). No se importó ningún registro.`,
       totalRows: salesData.length,
       successCount: 0,
       errorCount: errors.length,
@@ -114,33 +114,27 @@ export async function uploadSalesData(
     }
   }
 
-  // Insertar en la base de datos por lotes
-  const BATCH_SIZE = 100
-  let successCount = 0
+  // Insertar TODOS los datos de una sola vez (todo o nada)
+  const { data, error } = await supabase
+    .from('sales')
+    .insert(validSales)
+    .select()
 
-  for (let i = 0; i < validSales.length; i += BATCH_SIZE) {
-    const batch = validSales.slice(i, i + BATCH_SIZE)
-
-    const { data, error } = await supabase
-      .from('sales')
-      .insert(batch)
-      .select()
-
-    if (error) {
-      console.error('Error inserting batch:', error)
-      // Agregar errores del batch
-      batch.forEach((_, batchIndex) => {
-        errors.push({
-          row: i + batchIndex + 2,
-          error: `Error al insertar: ${error.message}`,
-        })
-      })
-    } else {
-      successCount += data?.length || 0
+  if (error) {
+    console.error('Error inserting sales:', error)
+    return {
+      success: false,
+      message: `Error al guardar en la base de datos: ${error.message}`,
+      totalRows: salesData.length,
+      successCount: 0,
+      errorCount: salesData.length,
+      errors: [{ row: 0, error: `Error al insertar: ${error.message}` }],
     }
   }
 
-  // Crear log de carga
+  const successCount = data?.length || 0
+
+  // Crear log de carga (solo si fue exitoso)
   const { error: logError } = await supabase
     .from('upload_logs')
     .insert({
@@ -148,9 +142,9 @@ export async function uploadSalesData(
       uploaded_by: user.id,
       records_count: salesData.length,
       success_count: successCount,
-      error_count: errors.length,
-      errors_detail: errors.length > 0 ? errors : null,
-      status: errors.length === 0 ? 'completed' : errors.length < salesData.length ? 'partial' : 'failed',
+      error_count: 0,
+      errors_detail: null,
+      status: 'completed',
     })
 
   if (logError) {
@@ -158,17 +152,12 @@ export async function uploadSalesData(
   }
 
   return {
-    success: successCount > 0,
-    message:
-      successCount === salesData.length
-        ? `¡Éxito! Se importaron ${successCount} registros.`
-        : successCount > 0
-        ? `Se importaron ${successCount} de ${salesData.length} registros. ${errors.length} registros con errores.`
-        : 'Error: No se pudo importar ningún registro.',
+    success: true,
+    message: `¡Éxito! Se importaron ${successCount} registros.`,
     totalRows: salesData.length,
     successCount,
-    errorCount: errors.length,
-    errors,
+    errorCount: 0,
+    errors: [],
   }
 }
 

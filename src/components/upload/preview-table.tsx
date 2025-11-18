@@ -27,10 +27,12 @@ export function PreviewTable({ data, onUpload, onCancel, isUploading, setIsUploa
     const today = new Date()
     return today.toISOString().split('T')[0]
   })
+  const [showDateAlert, setShowDateAlert] = useState(false)
 
   const handleUpload = () => {
     if (!fechaReporte) {
-      alert('Por favor selecciona la fecha del reporte')
+      setShowDateAlert(true)
+      setTimeout(() => setShowDateAlert(false), 5000)
       return
     }
 
@@ -60,41 +62,50 @@ export function PreviewTable({ data, onUpload, onCancel, isUploading, setIsUploa
   const hasMore = data.length > 10
 
   return (
-    <Card>
+    <Card className="shadow-lg">
       <CardHeader>
-        <CardTitle>Vista Previa de Datos</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-2xl">Vista Previa de Datos</CardTitle>
+        <CardDescription className="text-base">
           Se encontraron {data.length} registros. Revisa la información antes de importar.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
+        {showDateAlert && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Por favor selecciona la fecha del reporte antes de continuar
+            </AlertDescription>
+          </Alert>
+        )}
+
         <Alert>
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
+          <AlertDescription className="text-base">
             Mostrando {previewData.length} de {data.length} registros. Verifica que los datos sean correctos antes de continuar.
           </AlertDescription>
         </Alert>
 
         {/* Selector de Fecha del Reporte */}
-        <Card className="bg-muted/50 border-primary/20">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
-              <Calendar className="h-5 w-5 text-primary" />
+        <Card className="bg-muted/50 border-primary/20 shadow-md">
+          <CardContent className="pt-6 pb-6">
+            <div className="flex items-center gap-6">
+              <Calendar className="h-6 w-6 text-primary flex-shrink-0" />
               <div className="flex-1 space-y-2">
-                <Label htmlFor="fecha-reporte" className="text-base font-semibold">
+                <Label htmlFor="fecha-reporte" className="text-lg font-semibold">
                   Fecha del Reporte
                 </Label>
                 <p className="text-sm text-muted-foreground">
                   Selecciona la fecha a la que pertenecen estos datos (no la fecha de hoy)
                 </p>
               </div>
-              <div className="w-48">
+              <div className="w-56">
                 <Input
                   id="fecha-reporte"
                   type="date"
                   value={fechaReporte}
                   onChange={(e) => setFechaReporte(e.target.value)}
-                  className="text-base font-medium"
+                  className="text-base font-medium h-11"
                   required
                 />
               </div>
@@ -158,13 +169,24 @@ export function PreviewTable({ data, onUpload, onCancel, isUploading, setIsUploa
           </p>
         )}
 
-        <div className="flex gap-2 justify-end">
-          <Button variant="outline" onClick={onCancel} disabled={isUploading || isPending}>
-            <X className="mr-2 h-4 w-4" />
+        <div className="flex gap-3 justify-end pt-2">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={onCancel}
+            disabled={isUploading || isPending}
+            className="min-w-[140px]"
+          >
+            <X className="mr-2 h-5 w-5" />
             Cancelar
           </Button>
-          <Button onClick={handleUpload} disabled={isUploading || isPending}>
-            <Upload className="mr-2 h-4 w-4" />
+          <Button
+            size="lg"
+            onClick={handleUpload}
+            disabled={isUploading || isPending}
+            className="min-w-[200px]"
+          >
+            <Upload className="mr-2 h-5 w-5" />
             {isUploading || isPending ? 'Cargando...' : `Importar ${data.length} Registros`}
           </Button>
         </div>

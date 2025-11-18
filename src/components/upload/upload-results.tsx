@@ -16,37 +16,37 @@ export function UploadResults({ result, onReset }: UploadResultsProps) {
   const { success, message, totalRows, successCount, errorCount, errors } = result
 
   return (
-    <Card>
+    <Card className="shadow-lg">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-3 text-2xl">
           {success ? (
             <>
-              <CheckCircle2 className="h-5 w-5 text-green-500" />
+              <CheckCircle2 className="h-7 w-7 text-green-500" />
               Importación Completada
             </>
           ) : (
             <>
-              <XCircle className="h-5 w-5 text-red-500" />
+              <XCircle className="h-7 w-7 text-red-500" />
               Importación con Errores
             </>
           )}
         </CardTitle>
-        <CardDescription>{message}</CardDescription>
+        <CardDescription className="text-base mt-2">{message}</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
         {/* Estadísticas */}
-        <div className="grid grid-cols-3 gap-4">
-          <div className="bg-muted p-4 rounded-lg">
-            <p className="text-sm text-muted-foreground">Total</p>
-            <p className="text-2xl font-bold">{totalRows}</p>
+        <div className="grid grid-cols-3 gap-6">
+          <div className="bg-muted p-6 rounded-lg shadow-md">
+            <p className="text-base text-muted-foreground font-medium mb-2">Total</p>
+            <p className="text-3xl font-bold">{totalRows}</p>
           </div>
-          <div className="bg-green-50 dark:bg-green-950 p-4 rounded-lg">
-            <p className="text-sm text-green-600 dark:text-green-400">Exitosos</p>
-            <p className="text-2xl font-bold text-green-600 dark:text-green-400">{successCount}</p>
+          <div className="bg-green-50 dark:bg-green-950 p-6 rounded-lg shadow-md">
+            <p className="text-base text-green-600 dark:text-green-400 font-medium mb-2">Exitosos</p>
+            <p className="text-3xl font-bold text-green-600 dark:text-green-400">{successCount}</p>
           </div>
-          <div className="bg-red-50 dark:bg-red-950 p-4 rounded-lg">
-            <p className="text-sm text-red-600 dark:text-red-400">Errores</p>
-            <p className="text-2xl font-bold text-red-600 dark:text-red-400">{errorCount}</p>
+          <div className="bg-red-50 dark:bg-red-950 p-6 rounded-lg shadow-md">
+            <p className="text-base text-red-600 dark:text-red-400 font-medium mb-2">Errores</p>
+            <p className="text-3xl font-bold text-red-600 dark:text-red-400">{errorCount}</p>
           </div>
         </div>
 
@@ -75,8 +75,8 @@ export function UploadResults({ result, onReset }: UploadResultsProps) {
           </Alert>
         )}
 
-        <Button onClick={onReset} className="w-full">
-          <RotateCcw className="mr-2 h-4 w-4" />
+        <Button onClick={onReset} size="lg" className="w-full shadow-md">
+          <RotateCcw className="mr-2 h-5 w-5" />
           Cargar Otro Archivo
         </Button>
       </CardContent>

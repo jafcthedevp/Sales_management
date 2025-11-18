@@ -143,14 +143,14 @@ export function ExportForm() {
       )}
 
       {/* Filtros */}
-      <Card>
+      <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle>Filtros de Exportación</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl">Filtros de Exportación</CardTitle>
+          <CardDescription className="text-base">
             Aplica filtros para exportar solo los registros que necesitas
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Búsqueda general */}
             <div className="space-y-2">
@@ -320,14 +320,14 @@ export function ExportForm() {
       </Card>
 
       {/* Selección de Columnas */}
-      <Card>
+      <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle>Columnas a Exportar</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl">Columnas a Exportar</CardTitle>
+          <CardDescription className="text-base">
             Selecciona las columnas que deseas incluir en el archivo Excel
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={handleSelectAllColumns}>
               Seleccionar Todo
@@ -362,39 +362,40 @@ export function ExportForm() {
       </Card>
 
       {/* Resumen de Datos */}
-      <Card>
+      <Card className="shadow-lg border-primary/20">
         <CardHeader>
-          <CardTitle>Resumen de Datos</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl">Resumen de Datos</CardTitle>
+          <CardDescription className="text-base">
             Visualiza el total de dinero antes de exportar
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           <Button
             onClick={handleCalculateSummary}
             disabled={isLoadingSummary}
             variant="outline"
+            size="lg"
             className="w-full"
           >
-            <Calculator className="mr-2 h-4 w-4" />
+            <Calculator className="mr-2 h-5 w-5" />
             {isLoadingSummary ? 'Calculando...' : 'Calcular Resumen'}
           </Button>
 
           {summary && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="rounded-lg border bg-card p-4 text-center">
-                <p className="text-sm text-muted-foreground">Registros</p>
-                <p className="text-2xl font-bold">{summary.count.toLocaleString('es-PE')}</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="rounded-lg border bg-card p-6 text-center shadow-md">
+                <p className="text-base text-muted-foreground font-medium mb-2">Registros</p>
+                <p className="text-3xl font-bold">{summary.count.toLocaleString('es-PE')}</p>
               </div>
-              <div className="rounded-lg border bg-card p-4 text-center">
-                <p className="text-sm text-muted-foreground">Total</p>
-                <p className="text-2xl font-bold text-primary">
+              <div className="rounded-lg border bg-card p-6 text-center shadow-md">
+                <p className="text-base text-muted-foreground font-medium mb-2">Total</p>
+                <p className="text-3xl font-bold text-primary">
                   S/. {summary.total.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
               </div>
-              <div className="rounded-lg border bg-card p-4 text-center">
-                <p className="text-sm text-muted-foreground">Promedio</p>
-                <p className="text-2xl font-bold">
+              <div className="rounded-lg border bg-card p-6 text-center shadow-md">
+                <p className="text-base text-muted-foreground font-medium mb-2">Promedio</p>
+                <p className="text-3xl font-bold">
                   S/. {summary.average.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
               </div>
@@ -404,10 +405,19 @@ export function ExportForm() {
       </Card>
 
       {/* Botón de Exportar */}
+      {selectedColumns.length === 0 && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            Debes seleccionar al menos una columna para exportar
+          </AlertDescription>
+        </Alert>
+      )}
+
       <Button
         onClick={handleExport}
         disabled={isPending || selectedColumns.length === 0}
-        className="w-full"
+        className="w-full shadow-md"
         size="lg"
       >
         <Download className="mr-2 h-5 w-5" />
