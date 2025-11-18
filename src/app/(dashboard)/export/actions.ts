@@ -62,11 +62,11 @@ export async function exportSales(options: ExportOptions): Promise<ExportResult>
     }
 
     if (options.filters.fecha_desde) {
-      query = query.gte('fecha_venta', options.filters.fecha_desde)
+      query = query.gte('fecha_reporte', options.filters.fecha_desde)
     }
 
     if (options.filters.fecha_hasta) {
-      query = query.lte('fecha_venta', options.filters.fecha_hasta)
+      query = query.lte('fecha_reporte', options.filters.fecha_hasta)
     }
 
     if (options.filters.monto_min !== undefined) {
@@ -77,8 +77,8 @@ export async function exportSales(options: ExportOptions): Promise<ExportResult>
       query = query.lte('monto', options.filters.monto_max)
     }
 
-    // Ordenar por fecha de venta
-    query = query.order('fecha_venta', { ascending: false })
+    // Ordenar por fecha de reporte
+    query = query.order('fecha_reporte', { ascending: false })
 
     const { data, error } = await query
 
@@ -223,11 +223,11 @@ export async function getSalesSummary(filters: SalesFilters) {
     }
 
     if (filters.fecha_desde) {
-      query = query.gte('fecha_venta', filters.fecha_desde)
+      query = query.gte('fecha_reporte', filters.fecha_desde)
     }
 
     if (filters.fecha_hasta) {
-      query = query.lte('fecha_venta', filters.fecha_hasta)
+      query = query.lte('fecha_reporte', filters.fecha_hasta)
     }
 
     if (filters.monto_min !== undefined) {
