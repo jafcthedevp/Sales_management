@@ -1,8 +1,3 @@
-/**
- * Tipos de TypeScript generados para la base de datos de Supabase
- * Representa la estructura de todas las tablas y sus relaciones
- */
-
 export type Json =
   | string
   | number
@@ -90,7 +85,6 @@ export type Database = {
           created_at: string | null
           created_by: string | null
           fecha_reporte: string | null
-          fecha_venta: string | null
           id: string
           metodo_pago: string
           metodo_pago_1: string | null
@@ -105,7 +99,6 @@ export type Database = {
           created_at?: string | null
           created_by?: string | null
           fecha_reporte?: string | null
-          fecha_venta?: string | null
           id?: string
           metodo_pago: string
           metodo_pago_1?: string | null
@@ -120,7 +113,6 @@ export type Database = {
           created_at?: string | null
           created_by?: string | null
           fecha_reporte?: string | null
-          fecha_venta?: string | null
           id?: string
           metodo_pago?: string
           metodo_pago_1?: string | null
@@ -193,8 +185,8 @@ export type Database = {
     }
     Functions: {
       get_user_role: { Args: { user_id: string }; Returns: string }
-      is_admin: { Args: Record<PropertyKey, never>; Returns: boolean }
-      is_user_active: { Args: Record<PropertyKey, never>; Returns: boolean }
+      is_admin: { Args: never; Returns: boolean }
+      is_user_active: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

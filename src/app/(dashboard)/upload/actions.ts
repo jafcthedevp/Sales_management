@@ -16,7 +16,6 @@ const saleRowSchema = z.object({
   metodo_pago_1: z.string().optional().nullable(),
   monto: z.number().positive('Monto debe ser positivo'),
   region: z.enum(['LIMA', 'PROVINCIA']).nullable().optional(),
-  fecha_venta: z.string().nullable().optional(),
 })
 
 export interface UploadResult {
@@ -77,7 +76,6 @@ export async function uploadSalesData(
         nombre_cliente: row.nombre_cliente || null,
         metodo_pago_1: row.metodo_pago_1 || null,
         region: row.region || null,
-        fecha_venta: row.fecha_venta || null,
       })
 
       validSales.push({

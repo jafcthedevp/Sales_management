@@ -30,7 +30,6 @@ const AVAILABLE_COLUMNS = [
   { id: 'monto', label: 'MONTO', default: true },
   { id: 'region', label: 'REGIÓN', default: true },
   { id: 'fecha_reporte', label: 'FECHA REPORTE', default: true },
-  { id: 'fecha_venta', label: 'FECHA VENTA', default: false },
   { id: 'created_at', label: 'FECHA CREACIÓN', default: false },
   { id: 'updated_at', label: 'FECHA ACTUALIZACIÓN', default: false },
 ]

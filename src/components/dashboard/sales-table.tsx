@@ -189,38 +189,6 @@ export function SalesTable({
       },
     },
     {
-      accessorKey: 'fecha_venta',
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => {
-              const newOrder = column.getIsSorted() === 'asc' ? 'desc' : 'asc'
-              column.toggleSorting(column.getIsSorted() === 'asc')
-              onSortChange('fecha_venta', newOrder)
-            }}
-          >
-            Fecha Venta
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => {
-        const fecha = row.getValue('fecha_venta') as string | null
-        if (!fecha) return <span className="text-muted-foreground text-sm">-</span>
-
-        try {
-          return (
-            <div className="text-sm">
-              {format(new Date(fecha), 'dd/MM/yyyy', { locale: es })}
-            </div>
-          )
-        } catch {
-          return <span className="text-muted-foreground text-sm">-</span>
-        }
-      },
-    },
-    {
       accessorKey: 'created_at',
       header: ({ column }) => {
         return (

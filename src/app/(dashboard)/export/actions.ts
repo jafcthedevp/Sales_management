@@ -109,7 +109,6 @@ export async function exportSales(options: ExportOptions): Promise<ExportResult>
       monto: 'MONTO',
       region: 'REGIÓN',
       fecha_reporte: 'FECHA REPORTE',
-      fecha_venta: 'FECHA VENTA',
       created_at: 'FECHA CREACIÓN',
       updated_at: 'FECHA ACTUALIZACIÓN',
     }
@@ -124,7 +123,7 @@ export async function exportSales(options: ExportOptions): Promise<ExportResult>
         // Formatear valores especiales
         if (col === 'monto' && typeof value === 'number') {
           mappedRow[label] = value
-        } else if (col === 'fecha_venta' && value) {
+        } else if (col === 'fecha_reporte' && value) {
           mappedRow[label] = new Date(value as string).toLocaleDateString('es-PE')
         } else if ((col === 'created_at' || col === 'updated_at') && value) {
           mappedRow[label] = new Date(value as string).toLocaleString('es-PE')
