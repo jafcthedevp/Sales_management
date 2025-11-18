@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { LogOut, User, Settings } from 'lucide-react'
 import { logout } from '@/app/(auth)/login/actions'
+import { useRouter } from 'next/navigation'
 import type { Profile } from '@/types/database.types'
 
 interface DashboardHeaderProps {
@@ -21,6 +22,8 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ profile }: DashboardHeaderProps) {
+  const router = useRouter()
+
   const initials = profile.full_name
     ? profile.full_name
         .split(' ')
@@ -32,6 +35,10 @@ export function DashboardHeader({ profile }: DashboardHeaderProps) {
 
   const handleLogout = async () => {
     await logout()
+  }
+
+  const handleNavigateToSettings = () => {
+    router.push('/configuracion')
   }
 
   return (
@@ -86,11 +93,11 @@ export function DashboardHeader({ profile }: DashboardHeaderProps) {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem disabled>
+              <DropdownMenuItem onClick={handleNavigateToSettings}>
                 <User className="mr-2 h-4 w-4" />
                 Mi Perfil
               </DropdownMenuItem>
-              <DropdownMenuItem disabled>
+              <DropdownMenuItem onClick={handleNavigateToSettings}>
                 <Settings className="mr-2 h-4 w-4" />
                 Configuración
               </DropdownMenuItem>
