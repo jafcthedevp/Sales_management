@@ -231,6 +231,7 @@ export function FileUploader({ onFileParsed }: FileUploaderProps) {
             Seleccionar Archivo
           </Button>
           <input
+            title='Seleccionar archivo Excel'
             id="file-input"
             type="file"
             accept=".xlsx,.xls"
