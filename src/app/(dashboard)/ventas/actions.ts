@@ -127,39 +127,65 @@ export async function getSales(
 export async function getFilterOptions() {
   const supabase = await createClient()
 
-  // Obtener vendedores únicos
-  const { data: vendedores } = await supabase
-    .from('sales')
-    .select('cel_vendedor')
-    .not('cel_vendedor', 'is', null)
-    .order('cel_vendedor')
-    .returns<{ cel_vendedor: string }[]>()
+  // Lista completa de vendedores (hardcodeada)
+  const vendedores = [
+    'P1',
+    'P2',
+    'P4',
+    'P5',
+    'P6',
+    'TK1',
+    'TK2',
+    'TK3',
+    'LIVE OVER',
+    'LIVE BRAVOS',
+    'ZAZU-385',
+    'OVER-016',
+    'ZAZU-839',
+    'LIVEX-602',
+    'BRAVOS-376',
+  ]
 
-  // Obtener métodos de pago únicos
+  // Lista completa de teléfonos que reciben dinero (hardcodeada)
+  const metodosPago1 = [
+    'L1-000',
+    'L2-378',
+    'L3-711',
+    'L4-138',
+    'P1/556',
+    'P1-A/375',
+    'P2/576',
+    'P3/825',
+    'P4/101',
+    'P4-A/262',
+    'P5/795',
+    'TK1/320',
+    'TK2/505',
+    'TK3/016',
+    'TK6/600',
+    'LIVE BRAV/402',
+    'TRANSF. 5094 Cuenta bancaria',
+    'TRANSF. 4006 Cuenta bancaria',
+    'TRANSF. 0040 Cuenta bancaria',
+    'TRANSF. 0102 Cuenta bancaria',
+  ]
+
+  // Obtener métodos de pago únicos desde la BD (estos sí pueden variar)
   const { data: metodosPago } = await supabase
     .from('sales')
     .select('metodo_pago')
     .not('metodo_pago', 'is', null)
     .order('metodo_pago')
+    .limit(10000)
     .returns<{ metodo_pago: string }[]>()
 
-  // Obtener métodos de pago 2 únicos
-  const { data: metodosPago1 } = await supabase
-    .from('sales')
-    .select('metodo_pago_1')
-    .not('metodo_pago_1', 'is', null)
-    .order('metodo_pago_1')
-    .returns<{ metodo_pago_1: string }[]>()
-
-  // Extraer valores únicos
-  const vendedoresUnicos = [...new Set(vendedores?.map(v => v.cel_vendedor) || [])]
+  // Extraer valores únicos de métodos de pago
   const metodosPagoUnicos = [...new Set(metodosPago?.map(m => m.metodo_pago) || [])]
-  const metodosPago1Unicos = [...new Set(metodosPago1?.map(m => m.metodo_pago_1) || [])]
 
   return {
-    vendedores: vendedoresUnicos,
+    vendedores,
     metodosPago: metodosPagoUnicos,
-    metodosPago1: metodosPago1Unicos,
+    metodosPago1,
     regiones: ['LIMA', 'PROVINCIA'] as const,
   }
 }

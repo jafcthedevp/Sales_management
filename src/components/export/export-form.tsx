@@ -150,160 +150,179 @@ export function ExportForm() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Búsqueda general */}
-            <div className="space-y-2">
-              <Label htmlFor="search">Búsqueda General</Label>
-              <Input
-                id="search"
-                placeholder="Buscar en todos los campos..."
-                value={filters.search || ''}
-                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-              />
-            </div>
+          {/* Búsqueda General - Ancho completo */}
+          <div className="space-y-2">
+            <Label htmlFor="search" className="text-sm font-semibold">
+              Búsqueda General
+            </Label>
+            <Input
+              id="search"
+              placeholder="Buscar en vendedor, cliente, método de pago..."
+              value={filters.search || ''}
+              onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+              className="w-full"
+            />
+          </div>
 
-            {/* Vendedor */}
-            <div className="space-y-2">
-              <Label htmlFor="vendedor">Vendedor</Label>
-              <Select
-                value={filters.cel_vendedor || 'all'}
-                onValueChange={(value) =>
-                  setFilters({ ...filters, cel_vendedor: value === 'all' ? undefined : value })
-                }
-              >
-                <SelectTrigger id="vendedor">
-                  <SelectValue placeholder="Todos los vendedores" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos los vendedores</SelectItem>
-                  {filterOptions.vendedores.map((vendedor) => (
-                    <SelectItem key={vendedor} value={vendedor}>
-                      {vendedor}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          {/* Filtros Principales */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-muted-foreground">Filtros Principales</h3>
+            <div className="flex flex-wrap gap-4 items-end">
+              {/* Vendedor */}
+              <div className="space-y-2 w-52">
+                <Label htmlFor="vendedor" className="text-xs">Vendedor</Label>
+                <Select
+                  value={filters.cel_vendedor || 'all'}
+                  onValueChange={(value) =>
+                    setFilters({ ...filters, cel_vendedor: value === 'all' ? undefined : value })
+                  }
+                >
+                  <SelectTrigger id="vendedor" className="w-full">
+                    <SelectValue placeholder="Todos los vendedores" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos los vendedores</SelectItem>
+                    {filterOptions.vendedores.map((vendedor) => (
+                      <SelectItem key={vendedor} value={vendedor}>
+                        {vendedor}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            {/* Método de Pago */}
-            <div className="space-y-2">
-              <Label htmlFor="metodo-pago">Método de Pago</Label>
-              <Select
-                value={filters.metodo_pago || 'all'}
-                onValueChange={(value) =>
-                  setFilters({ ...filters, metodo_pago: value === 'all' ? undefined : value })
-                }
-              >
-                <SelectTrigger id="metodo-pago">
-                  <SelectValue placeholder="Todos los métodos" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos los métodos</SelectItem>
-                  {filterOptions.metodosPago.map((metodo) => (
-                    <SelectItem key={metodo} value={metodo}>
-                      {metodo}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+              {/* Método de Pago */}
+              <div className="space-y-2 w-52">
+                <Label htmlFor="metodo-pago" className="text-xs">Método de Pago</Label>
+                <Select
+                  value={filters.metodo_pago || 'all'}
+                  onValueChange={(value) =>
+                    setFilters({ ...filters, metodo_pago: value === 'all' ? undefined : value })
+                  }
+                >
+                  <SelectTrigger id="metodo-pago" className="w-full">
+                    <SelectValue placeholder="Todos los métodos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos los métodos</SelectItem>
+                    {filterOptions.metodosPago.map((metodo) => (
+                      <SelectItem key={metodo} value={metodo}>
+                        {metodo}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            {/* Método de Pago 1 */}
-            <div className="space-y-2">
-              <Label htmlFor="metodo-pago-1">Método de Pago 1</Label>
-              <Select
-                value={filters.metodo_pago_1 || 'all'}
-                onValueChange={(value) =>
-                  setFilters({ ...filters, metodo_pago_1: value === 'all' ? undefined : value })
-                }
-              >
-                <SelectTrigger id="metodo-pago-1">
-                  <SelectValue placeholder="Todos los métodos" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos los métodos</SelectItem>
-                  {filterOptions.metodosPago1.map((metodo) => (
-                    <SelectItem key={metodo} value={metodo}>
-                      {metodo}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {/* Región */}
+              <div className="space-y-2 w-52">
+                <Label htmlFor="region" className="text-xs">Región</Label>
+                <Select
+                  value={filters.region || 'all'}
+                  onValueChange={(value) =>
+                    setFilters({
+                      ...filters,
+                      region: value === 'all' ? undefined : (value as 'LIMA' | 'PROVINCIA'),
+                    })
+                  }
+                >
+                  <SelectTrigger id="region" className="w-full">
+                    <SelectValue placeholder="Todas las regiones" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas las regiones</SelectItem>
+                    <SelectItem value="LIMA">Lima</SelectItem>
+                    <SelectItem value="PROVINCIA">Provincia</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+          </div>
 
-            {/* Región */}
-            <div className="space-y-2">
-              <Label htmlFor="region">Región</Label>
-              <Select
-                value={filters.region || 'all'}
-                onValueChange={(value) =>
-                  setFilters({
-                    ...filters,
-                    region: value === 'all' ? undefined : (value as 'LIMA' | 'PROVINCIA'),
-                  })
-                }
-              >
-                <SelectTrigger id="region">
-                  <SelectValue placeholder="Todas las regiones" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas las regiones</SelectItem>
-                  <SelectItem value="LIMA">Lima</SelectItem>
-                  <SelectItem value="PROVINCIA">Provincia</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          {/* Filtros Secundarios: Teléfono, Fechas y Montos */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-muted-foreground">Filtros Adicionales</h3>
+            <div className="flex flex-wrap gap-4 items-end">
+              {/* Método de Pago 1 */}
+              <div className="space-y-2 w-64">
+                <Label htmlFor="metodo-pago-1" className="text-xs">
+                  Teléfono que Recibe Dinero
+                </Label>
+                <Select
+                  value={filters.metodo_pago_1 || 'all'}
+                  onValueChange={(value) =>
+                    setFilters({ ...filters, metodo_pago_1: value === 'all' ? undefined : value })
+                  }
+                >
+                  <SelectTrigger id="metodo-pago-1" className="w-full">
+                    <SelectValue placeholder="Todos los teléfonos/cuentas" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos los teléfonos/cuentas</SelectItem>
+                    {filterOptions.metodosPago1.map((metodo) => (
+                      <SelectItem key={metodo} value={metodo}>
+                        {metodo}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            {/* Fecha Desde */}
-            <div className="space-y-2">
-              <Label htmlFor="fecha-desde">Fecha Desde</Label>
-              <Input
-                id="fecha-desde"
-                type="date"
-                value={filters.fecha_desde || ''}
-                onChange={(e) => setFilters({ ...filters, fecha_desde: e.target.value })}
-              />
-            </div>
+              {/* Fecha Desde */}
+              <div className="space-y-2 w-40">
+                <Label htmlFor="fecha-desde" className="text-xs">Fecha Desde</Label>
+                <Input
+                  id="fecha-desde"
+                  type="date"
+                  value={filters.fecha_desde || ''}
+                  onChange={(e) => setFilters({ ...filters, fecha_desde: e.target.value })}
+                  className="w-full"
+                />
+              </div>
 
-            {/* Fecha Hasta */}
-            <div className="space-y-2">
-              <Label htmlFor="fecha-hasta">Fecha Hasta</Label>
-              <Input
-                id="fecha-hasta"
-                type="date"
-                value={filters.fecha_hasta || ''}
-                onChange={(e) => setFilters({ ...filters, fecha_hasta: e.target.value })}
-              />
-            </div>
+              {/* Fecha Hasta */}
+              <div className="space-y-2 w-40">
+                <Label htmlFor="fecha-hasta" className="text-xs">Fecha Hasta</Label>
+                <Input
+                  id="fecha-hasta"
+                  type="date"
+                  value={filters.fecha_hasta || ''}
+                  onChange={(e) => setFilters({ ...filters, fecha_hasta: e.target.value })}
+                  className="w-full"
+                />
+              </div>
 
-            {/* Monto Mínimo */}
-            <div className="space-y-2">
-              <Label htmlFor="monto-min">Monto Mínimo</Label>
-              <Input
-                id="monto-min"
-                type="number"
-                step="0.01"
-                placeholder="0.00"
-                value={filters.monto_min || ''}
-                onChange={(e) =>
-                  setFilters({ ...filters, monto_min: e.target.value ? Number(e.target.value) : undefined })
-                }
-              />
-            </div>
+              {/* Monto Mínimo */}
+              <div className="space-y-2 w-40">
+                <Label htmlFor="monto-min" className="text-xs">Monto Mínimo (S/.)</Label>
+                <Input
+                  id="monto-min"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={filters.monto_min || ''}
+                  onChange={(e) =>
+                    setFilters({ ...filters, monto_min: e.target.value ? Number(e.target.value) : undefined })
+                  }
+                  className="w-full"
+                />
+              </div>
 
-            {/* Monto Máximo */}
-            <div className="space-y-2">
-              <Label htmlFor="monto-max">Monto Máximo</Label>
-              <Input
-                id="monto-max"
-                type="number"
-                step="0.01"
-                placeholder="0.00"
-                value={filters.monto_max || ''}
-                onChange={(e) =>
-                  setFilters({ ...filters, monto_max: e.target.value ? Number(e.target.value) : undefined })
-                }
-              />
+              {/* Monto Máximo */}
+              <div className="space-y-2 w-40">
+                <Label htmlFor="monto-max" className="text-xs">Monto Máximo (S/.)</Label>
+                <Input
+                  id="monto-max"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={filters.monto_max || ''}
+                  onChange={(e) =>
+                    setFilters({ ...filters, monto_max: e.target.value ? Number(e.target.value) : undefined })
+                  }
+                  className="w-full"
+                />
+              </div>
             </div>
           </div>
 

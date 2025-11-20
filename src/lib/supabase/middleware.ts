@@ -7,6 +7,7 @@ import { NextResponse, type NextRequest } from 'next/server'
  * IMPORTANTE: En Next.js 15/16, el middleware SOLO debe:
  * 1. Refrescar tokens de autenticación
  * 2. Actualizar cookies
+ * 3. Manejar intercambio de código de autenticación (para recuperación de contraseña)
  *
  * NO debe hacer validaciones de base de datos o redirecciones complejas.
  * La protección de rutas se hace en Server Components usando el DAL.
@@ -38,6 +39,16 @@ export async function updateSession(request: NextRequest) {
       },
     }
   )
+
+  // Manejar intercambio de código de autenticación (para recuperación de contraseña y magic links)
+  // Supabase envía un código en el URL que debe ser intercambiado por una sesión
+  const { searchParams } = request.nextUrl
+  const code = searchParams.get('code')
+
+  if (code) {
+    // Intercambiar el código por una sesión
+    await supabase.auth.exchangeCodeForSession(code)
+  }
 
   // IMPORTANTE: No usar getUser() o getSession() aquí
   // Usar getClaims() que es más ligero y diseñado para middleware
