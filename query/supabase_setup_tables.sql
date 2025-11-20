@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS public.sales (
   region TEXT CHECK (region IN ('LIMA', 'PROVINCIA')),
 
   -- Metadata
-  fecha_venta DATE,
+  fecha_reporte DATE,
   created_by UUID REFERENCES public.profiles(id),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS public.sales (
 -- Índices para optimización de búsquedas
 CREATE INDEX IF NOT EXISTS idx_sales_cel_vendedor ON public.sales(cel_vendedor);
 CREATE INDEX IF NOT EXISTS idx_sales_numero_cliente ON public.sales(numero_cliente);
-CREATE INDEX IF NOT EXISTS idx_sales_fecha_venta ON public.sales(fecha_venta);
+CREATE INDEX IF NOT EXISTS idx_sales_fecha_reporte ON public.sales(fecha_reporte);
 CREATE INDEX IF NOT EXISTS idx_sales_region ON public.sales(region);
 CREATE INDEX IF NOT EXISTS idx_sales_metodo_pago ON public.sales(metodo_pago);
 CREATE INDEX IF NOT EXISTS idx_sales_created_by ON public.sales(created_by);

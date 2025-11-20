@@ -185,6 +185,15 @@ export type Database = {
     }
     Functions: {
       get_user_role: { Args: { user_id: string }; Returns: string }
+      get_sales_stats: {
+        Args: never
+        Returns: {
+          total_sales: number
+          total_revenue: number
+          average_sale: number
+          unique_sellers: number
+        }
+      }
       is_admin: { Args: never; Returns: boolean }
       is_user_active: { Args: never; Returns: boolean }
     }
