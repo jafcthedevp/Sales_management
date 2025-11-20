@@ -36,7 +36,7 @@ export function FileUploader({ onFileParsed }: FileUploaderProps) {
           'metodo pago 1': 'metodo_pago_1',
           'monto': 'monto',
           'region': 'region',
-          'fecha venta': 'fecha_venta',
+          'fecha reporte': 'fecha_reporte',
         }
 
         const requiredColumns = ['metodo_pago', 'monto']
@@ -126,8 +126,8 @@ export function FileUploader({ onFileParsed }: FileUploaderProps) {
               ['LIMA', 'PROVINCIA'].includes(String(row[validColumnIndices!.region]).toUpperCase())
                 ? (String(row[validColumnIndices!.region]).toUpperCase() as 'LIMA' | 'PROVINCIA')
                 : null,
-            fecha_venta: validColumnIndices!.fecha_venta !== undefined && row[validColumnIndices!.fecha_venta]
-              ? String(row[validColumnIndices!.fecha_venta])
+            fecha_reporte: validColumnIndices!.fecha_reporte !== undefined && row[validColumnIndices!.fecha_reporte]
+              ? String(row[validColumnIndices!.fecha_reporte])
               : null,
           }))
 

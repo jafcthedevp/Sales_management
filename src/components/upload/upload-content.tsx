@@ -18,6 +18,7 @@ export interface ParsedSale {
   metodo_pago_1?: string | null
   monto: number | string
   region?: 'LIMA' | 'PROVINCIA' | null
+  fecha_reporte?: string | null
 }
 
 export function UploadContent() {

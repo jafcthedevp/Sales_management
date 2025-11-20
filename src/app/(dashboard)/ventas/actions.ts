@@ -77,11 +77,11 @@ export async function getSales(
   }
 
   if (filters.fecha_desde) {
-    query = query.gte('fecha_venta', filters.fecha_desde)
+    query = query.gte('fecha_reporte', filters.fecha_desde)
   }
 
   if (filters.fecha_hasta) {
-    query = query.lte('fecha_venta', filters.fecha_hasta)
+    query = query.lte('fecha_reporte', filters.fecha_hasta)
   }
 
   if (filters.monto_min !== undefined) {

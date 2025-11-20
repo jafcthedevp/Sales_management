@@ -7,7 +7,11 @@
       "Bash(node read-excel.js:*)",
       "Bash(npx tsc:*)",
       "Bash(npx supabase --version)",
-      "Bash(npx supabase:*)"
+      "Bash(npx supabase:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run build:*)",
+      "Bash(src/types/database.types.new.ts)",
+      "Bash(git fetch:*)"
     ],
     "deny": [],
     "ask": []
