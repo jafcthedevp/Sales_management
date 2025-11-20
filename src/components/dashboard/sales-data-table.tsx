@@ -17,6 +17,7 @@ interface SalesDataTableProps {
   vendedores: string[]
   metodosPago: string[]
   metodosPago1: string[]
+  empresas: Array<{ value: string; label: string }>
 }
 
 export function SalesDataTable({
@@ -28,6 +29,7 @@ export function SalesDataTable({
   vendedores,
   metodosPago,
   metodosPago1,
+  empresas,
 }: SalesDataTableProps) {
   const [sales, setSales] = useState<Sale[]>(initialSales)
   const [total, setTotal] = useState(initialTotal)
@@ -98,6 +100,7 @@ export function SalesDataTable({
             vendedores={vendedores}
             metodosPago={metodosPago}
             metodosPago1={metodosPago1}
+            empresas={empresas}
           />
 
           {/* Tabla */}

@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import type { Sale } from '@/types/database.types'
+import { type Company, getPaymentMethodsByCompany, COMPANY_OPTIONS } from '@/lib/companies'
 
 export interface SalesFilters {
   search?: string
@@ -9,6 +10,7 @@ export interface SalesFilters {
   numero_cliente?: string
   metodo_pago?: string
   metodo_pago_1?: string
+  empresa?: Company | '' | null // Nuevo filtro por empresa
   region?: 'LIMA' | 'PROVINCIA' | null
   fecha_desde?: string
   fecha_hasta?: string
@@ -70,6 +72,23 @@ export async function getSales(
 
   if (filters.metodo_pago_1) {
     query = query.ilike('metodo_pago_1', `%${filters.metodo_pago_1}%`)
+  }
+
+  // Filtro por empresa (OVERSHARK, BRAVO'S, OTROS)
+  if (filters.empresa !== undefined && filters.empresa !== null && filters.empresa !== '') {
+    const paymentMethods = getPaymentMethodsByCompany(filters.empresa)
+
+    if (paymentMethods.length > 0) {
+      // Filtrar por los métodos de pago de la empresa
+      query = query.in('metodo_pago_1', paymentMethods)
+    } else if (filters.empresa === 'OTROS') {
+      // Para "OTROS", excluir todos los métodos conocidos de OVERSHARK y BRAVO'S
+      const oversharkMethods = getPaymentMethodsByCompany('OVERSHARK')
+      const bravosMethods = getPaymentMethodsByCompany('BRAVOS')
+      const allKnownMethods = [...oversharkMethods, ...bravosMethods]
+
+      query = query.not('metodo_pago_1', 'in', `(${allKnownMethods.map(m => `"${m}"`).join(',')})`)
+    }
   }
 
   if (filters.region) {
@@ -147,6 +166,7 @@ export async function getFilterOptions() {
   ]
 
   // Lista completa de teléfonos que reciben dinero (hardcodeada)
+  // OVERSHARK
   const metodosPago1 = [
     'L1-000',
     'L2-378',
@@ -163,11 +183,13 @@ export async function getFilterOptions() {
     'TK2/505',
     'TK3/016',
     'TK6/600',
-    'LIVE BRAV/402',
+    'TRANSF. 0102 Cuenta bancaria',
     'TRANSF. 5094 Cuenta bancaria',
+    // BRAVO'S
+    'LIVE BRAV/402',
+    'PUB BRAV/829',
     'TRANSF. 4006 Cuenta bancaria',
     'TRANSF. 0040 Cuenta bancaria',
-    'TRANSF. 0102 Cuenta bancaria',
   ]
 
   // Obtener métodos de pago únicos desde la BD (estos sí pueden variar)
@@ -187,6 +209,7 @@ export async function getFilterOptions() {
     metodosPago: metodosPagoUnicos,
     metodosPago1,
     regiones: ['LIMA', 'PROVINCIA'] as const,
+    empresas: COMPANY_OPTIONS, // Nuevo: opciones de empresa
   }
 }
 

@@ -26,6 +26,7 @@ interface SalesFiltersProps {
   vendedores: string[]
   metodosPago: string[]
   metodosPago1: string[]
+  empresas: Array<{ value: string; label: string }>
 }
 
 export function SalesFilters({
@@ -34,6 +35,7 @@ export function SalesFilters({
   vendedores,
   metodosPago,
   metodosPago1,
+  empresas,
 }: SalesFiltersProps) {
   const [localFilters, setLocalFilters] = useState<SalesFilters>(filters)
   const [showAdvanced, setShowAdvanced] = useState(false)
@@ -208,6 +210,28 @@ export function SalesFilters({
                 </Select>
               </div>
 
+              {/* Empresa */}
+              <div className="space-y-2">
+                <Label htmlFor="empresa">Empresa</Label>
+                <Select
+                  value={localFilters.empresa || 'all'}
+                  onValueChange={(value) =>
+                    handleFilterChange('empresa', value)
+                  }
+                >
+                  <SelectTrigger id="empresa">
+                    <SelectValue placeholder="Todas las empresas" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {empresas.map((empresa) => (
+                      <SelectItem key={empresa.value} value={empresa.value || 'all'}>
+                        {empresa.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               {/* Rango de Fechas */}
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-2">
@@ -341,6 +365,18 @@ export function SalesFilters({
                 onClick={() => {
                   handleFilterChange('region', null)
                   onFiltersChange({ ...localFilters, region: null })
+                }}
+              />
+            </Badge>
+          )}
+          {localFilters.empresa && (
+            <Badge variant="secondary" className="gap-1">
+              Empresa: {empresas.find(e => e.value === localFilters.empresa)?.label || localFilters.empresa}
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => {
+                  handleFilterChange('empresa', '')
+                  onFiltersChange({ ...localFilters, empresa: undefined })
                 }}
               />
             </Badge>

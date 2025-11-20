@@ -1,11 +1,11 @@
 import { getDashboardAnalytics } from '@/app/(dashboard)/dashboard/actions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { getCategoryName, getCategoryColor, getCompanyColor } from '@/lib/payment-methods'
-import { TrendingUp, DollarSign, Layers, Building2 } from 'lucide-react'
+import { getCompanyConfig } from '@/lib/companies'
+import { TrendingUp, DollarSign, Building2 } from 'lucide-react'
 
 /**
- * Componente de análisis de métodos de pago
+ * Componente de análisis por empresa
  */
 export async function PaymentAnalytics() {
   const analytics = await getDashboardAnalytics()
@@ -14,115 +14,52 @@ export async function PaymentAnalytics() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Análisis de Métodos de Pago</CardTitle>
+          <CardTitle>Análisis de Ventas por Empresa</CardTitle>
           <CardDescription>No hay datos disponibles</CardDescription>
         </CardHeader>
       </Card>
     )
   }
 
+  // Filtrar OTROS si es muy pequeño
+  const byCompanyFiltered = analytics.byCompany.filter(comp => comp.company !== 'OTROS' || comp.percentage > 5)
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {/* Distribución por Categoría */}
-      <Card className="md:col-span-2">
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <Layers className="h-5 w-5 text-primary" />
-            <CardTitle>Distribución por Tipo de Pago</CardTitle>
-          </div>
-          <CardDescription>
-            Análisis por categoría de métodos de pago
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {analytics.byCategory.map((cat) => {
-              const maxAmount = Math.max(...analytics.byCategory.map(c => c.total))
-              const widthPercentage = (cat.total / maxAmount) * 100
-
-              return (
-                <div key={cat.category} className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="h-3 w-3 rounded-full"
-                        style={{ backgroundColor: getCategoryColor(cat.category) }}
-                      />
-                      <span className="font-medium">{getCategoryName(cat.category)}</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-muted-foreground">
-                        {cat.count} ventas
-                      </span>
-                      <span className="font-bold min-w-[100px] text-right">
-                        S/. {cat.total.toLocaleString('es-PE', { minimumFractionDigits: 2 })}
-                      </span>
-                      <Badge variant="secondary" className="min-w-[60px] justify-center">
-                        {cat.percentage.toFixed(1)}%
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="h-2 bg-muted rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all duration-500"
-                      style={{
-                        width: `${widthPercentage}%`,
-                        backgroundColor: getCategoryColor(cat.category)
-                      }}
-                    />
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-
-          <div className="mt-6 pt-4 border-t">
-            <div className="flex items-center justify-between text-sm font-semibold">
-              <span>Total</span>
-              <div className="flex items-center gap-3">
-                <span>{analytics.totalSales} ventas</span>
-                <span className="min-w-[100px] text-right">
-                  S/. {analytics.totalAmount.toLocaleString('es-PE', { minimumFractionDigits: 2 })}
-                </span>
-                <span className="min-w-[60px] text-right">100%</span>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Distribución por Empresa */}
-      <Card>
+      <Card className="md:col-span-1">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Building2 className="h-5 w-5 text-primary" />
             <CardTitle>Por Empresa</CardTitle>
           </div>
           <CardDescription>
-            Comparación OVERSHARK vs BRAVO'S
+            Distribución OVERSHARK vs BRAVO'S
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
-            {analytics.byCompany.map((comp) => {
+            {byCompanyFiltered.map((comp) => {
               const maxAmount = Math.max(...analytics.byCompany.map(c => c.total))
               const widthPercentage = (comp.total / maxAmount) * 100
+              const config = getCompanyConfig(comp.company)
+              const displayName = config?.displayName || comp.company
 
               return (
                 <div key={comp.company} className="space-y-3">
                   <div className="flex items-center justify-between">
                     <h3
                       className="text-lg font-bold"
-                      style={{ color: getCompanyColor(comp.company) }}
+                      style={{ color: config?.color || '#6b7280' }}
                     >
-                      {comp.company}
+                      {displayName}
                     </h3>
                     <Badge
                       variant="outline"
                       className="text-base px-3"
                       style={{
-                        borderColor: getCompanyColor(comp.company),
-                        color: getCompanyColor(comp.company)
+                        borderColor: config?.color || '#6b7280',
+                        color: config?.color || '#6b7280'
                       }}
                     >
                       {comp.percentage.toFixed(1)}%
@@ -135,13 +72,13 @@ export async function PaymentAnalytics() {
                         className="h-full rounded-full transition-all duration-500"
                         style={{
                           width: `${widthPercentage}%`,
-                          backgroundColor: getCompanyColor(comp.company)
+                          backgroundColor: config?.color || '#6b7280'
                         }}
                       />
                     </div>
 
                     <div className="flex items-center justify-between text-sm text-muted-foreground">
-                      <span>{comp.count} transacciones</span>
+                      <span>{comp.count} ventas</span>
                       <span className="font-semibold text-foreground">
                         S/. {comp.total.toLocaleString('es-PE', { minimumFractionDigits: 2 })}
                       </span>
@@ -151,73 +88,79 @@ export async function PaymentAnalytics() {
               )
             })}
           </div>
+
+          <div className="mt-6 pt-4 border-t">
+            <div className="text-center">
+              <p className="text-xs text-muted-foreground">Total Sistema</p>
+              <p className="text-2xl font-bold text-primary">
+                S/. {analytics.totalAmount.toLocaleString('es-PE', { minimumFractionDigits: 2 })}
+              </p>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Top Métodos de Pago */}
-      <Card className="md:col-span-2 lg:col-span-3">
+      {/* Top Teléfonos / Cuentas */}
+      <Card className="md:col-span-2">
         <CardHeader>
           <div className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-primary" />
-            <CardTitle>Top 10 Métodos de Pago</CardTitle>
+            <CardTitle>Top 10 Teléfonos / Cuentas</CardTitle>
           </div>
           <CardDescription>
-            Métodos de pago con mayor volumen de ventas
+            Cuentas con mayor volumen de ingresos
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-            {analytics.topMethods.map((method, index) => (
-              <Card key={method.code} className="border-2 hover:shadow-md transition-shadow">
-                <CardContent className="pt-6">
-                  <div className="flex items-start justify-between mb-3">
-                    <Badge
-                      variant="secondary"
-                      className="text-xs"
-                      style={{
-                        backgroundColor: `${getCategoryColor(method.category)}20`,
-                        color: getCategoryColor(method.category),
-                        borderColor: getCategoryColor(method.category)
-                      }}
-                    >
-                      #{index + 1}
-                    </Badge>
-                    <Badge
-                      variant="outline"
-                      className="text-xs"
-                      style={{
-                        borderColor: getCompanyColor(method.company),
-                        color: getCompanyColor(method.company)
-                      }}
-                    >
-                      {method.company}
-                    </Badge>
-                  </div>
+            {analytics.topMethods.map((method, index) => {
+              const config = getCompanyConfig(method.company)
+              const displayCompany = config?.displayName || method.company
 
-                  <div className="space-y-1">
-                    <p className="font-bold text-sm truncate" title={method.code}>
-                      {method.code}
-                    </p>
-                    <p className="text-xs text-muted-foreground truncate" title={method.description}>
-                      {method.description}
-                    </p>
-                  </div>
+              return (
+                <Card key={method.code} className="border-2 hover:shadow-md transition-shadow">
+                  <CardContent className="pt-6">
+                    <div className="flex items-start justify-between mb-3">
+                      <Badge
+                        variant="secondary"
+                        className="text-xs font-bold"
+                      >
+                        #{index + 1}
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className="text-xs"
+                        style={{
+                          borderColor: config?.color || '#6b7280',
+                          color: config?.color || '#6b7280'
+                        }}
+                      >
+                        {displayCompany}
+                      </Badge>
+                    </div>
 
-                  <div className="mt-4 pt-4 border-t space-y-1">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-muted-foreground">Ventas:</span>
-                      <span className="font-semibold">{method.count}</span>
+                    <div className="space-y-1">
+                      <p className="font-bold text-sm truncate" title={method.code}>
+                        {method.code}
+                      </p>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <DollarSign className="h-3 w-3 text-muted-foreground" />
-                      <span className="font-bold text-sm">
-                        S/. {method.total.toLocaleString('es-PE', { maximumFractionDigits: 0 })}
-                      </span>
+
+                    <div className="mt-4 pt-4 border-t space-y-1">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-muted-foreground">Ventas:</span>
+                        <span className="font-semibold">{method.count}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <DollarSign className="h-3 w-3 text-muted-foreground" />
+                        <span className="font-bold text-sm">
+                          S/. {method.total.toLocaleString('es-PE', { maximumFractionDigits: 0 })}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
         </CardContent>
       </Card>

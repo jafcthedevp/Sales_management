@@ -18,6 +18,7 @@ interface FilterOptionsData {
   metodosPago: string[]
   metodosPago1: string[]
   regiones: readonly string[]
+  empresas: Array<{ value: string; label: string }>
 }
 
 const AVAILABLE_COLUMNS = [
@@ -45,6 +46,7 @@ export function ExportForm() {
     metodosPago: [],
     metodosPago1: [],
     regiones: ['LIMA', 'PROVINCIA'] as const,
+    empresas: [],
   })
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null)
   const [summary, setSummary] = useState<{ count: number; total: number; average: number } | null>(null)
@@ -233,6 +235,31 @@ export function ExportForm() {
                     <SelectItem value="all">Todas las regiones</SelectItem>
                     <SelectItem value="LIMA">Lima</SelectItem>
                     <SelectItem value="PROVINCIA">Provincia</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Empresa */}
+              <div className="space-y-2 w-52">
+                <Label htmlFor="empresa" className="text-xs">Empresa</Label>
+                <Select
+                  value={filters.empresa || 'all'}
+                  onValueChange={(value) =>
+                    setFilters({
+                      ...filters,
+                      empresa: value === 'all' ? undefined : (value as 'OVERSHARK' | 'BRAVOS' | 'OTROS' | '')
+                    })
+                  }
+                >
+                  <SelectTrigger id="empresa" className="w-full">
+                    <SelectValue placeholder="Todas las empresas" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {filterOptions.empresas.map((empresa) => (
+                      <SelectItem key={empresa.value} value={empresa.value || 'all'}>
+                        {empresa.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

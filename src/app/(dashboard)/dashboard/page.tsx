@@ -2,6 +2,10 @@ import { Suspense } from 'react'
 import { getUserProfile } from '@/lib/dal'
 import { StatsCards } from '@/components/dashboard/stats-cards'
 import { RecentSales } from '@/components/dashboard/recent-sales'
+import { PaymentAnalytics } from '@/components/dashboard/payment-analytics'
+import { RegionAnalytics } from '@/components/dashboard/region-analytics'
+import { TopSellers } from '@/components/dashboard/top-sellers'
+import { SalesTimeline } from '@/components/dashboard/sales-timeline'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 
@@ -25,12 +29,30 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      {/* Tarjetas de estadísticas */}
+      {/* Tarjetas de estadísticas principales */}
       <Suspense fallback={<StatsCardsSkeleton />}>
         <StatsCards />
       </Suspense>
 
-      {/* Ventas recientes */}
+      {/* Análisis por Empresa y Top Teléfonos */}
+      <Suspense fallback={<AnalyticsSkeleton />}>
+        <PaymentAnalytics />
+      </Suspense>
+
+      {/* Grid: Región, Timeline, Top Sellers */}
+      <div className="grid gap-6 md:grid-cols-3">
+        <Suspense fallback={<CardSkeleton />}>
+          <RegionAnalytics />
+        </Suspense>
+        <Suspense fallback={<CardSkeleton />}>
+          <SalesTimeline />
+        </Suspense>
+        <Suspense fallback={<CardSkeleton />}>
+          <TopSellers />
+        </Suspense>
+      </div>
+
+      {/* Ventas Recientes */}
       <Suspense fallback={<RecentSalesSkeleton />}>
         <RecentSales />
       </Suspense>
@@ -75,6 +97,60 @@ function RecentSalesSkeleton() {
                 <Skeleton className="h-4 w-full" />
                 <Skeleton className="h-3 w-2/3" />
               </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function AnalyticsSkeleton() {
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <Card className="md:col-span-1">
+        <CardHeader>
+          <Skeleton className="h-6 w-32" />
+          <Skeleton className="h-4 w-48" />
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {[...Array(3)].map((_, i) => (
+              <Skeleton key={i} className="h-20 w-full" />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+      <Card className="md:col-span-2">
+        <CardHeader>
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-4 w-64" />
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-5">
+            {[...Array(10)].map((_, i) => (
+              <Skeleton key={i} className="h-32 w-full" />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+function CardSkeleton() {
+  return (
+    <Card>
+      <CardHeader>
+        <Skeleton className="h-6 w-40" />
+        <Skeleton className="h-4 w-64" />
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-2 w-full" />
             </div>
           ))}
         </div>

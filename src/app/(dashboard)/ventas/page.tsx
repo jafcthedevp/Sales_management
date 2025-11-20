@@ -65,6 +65,7 @@ async function SalesContent() {
         vendedores={filterOptions.vendedores}
         metodosPago={filterOptions.metodosPago}
         metodosPago1={filterOptions.metodosPago1}
+        empresas={filterOptions.empresas}
       />
     </div>
   )

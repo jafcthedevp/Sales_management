@@ -18,6 +18,16 @@ export async function StatsCards() {
   // Esto es más eficiente que traer todos los datos y calcular en el cliente
   const { data: statsData, error } = await supabase.rpc('get_sales_stats')
 
+  // Logging para debugging (solo en desarrollo)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('📊 Stats Debug:', {
+      hasError: !!error,
+      errorMessage: error?.message,
+      hasData: !!statsData,
+      statsData: statsData,
+    })
+  }
+
   // Si falla el RPC o no existe, usar método alternativo
   let totalSales = 0
   let totalRevenue = 0
@@ -29,7 +39,15 @@ export async function StatsCards() {
     totalRevenue = statsData.total_revenue || 0
     averageSale = statsData.average_sale || 0
     uniqueSellers = statsData.unique_sellers || 0
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log('✅ Usando RPC get_sales_stats():', { totalSales, totalRevenue, averageSale, uniqueSellers })
+    }
   } else {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('⚠️ RPC falló, usando fallback')
+    }
+
     // Fallback: Obtener estadísticas usando consultas individuales
     const [
       { count },
@@ -37,14 +55,25 @@ export async function StatsCards() {
       { data: sellersData },
     ] = await Promise.all([
       supabase.from('sales').select('*', { count: 'exact', head: true }),
-      supabase.from('sales').select('monto').limit(100000),
-      supabase.from('sales').select('cel_vendedor').limit(100000),
+      supabase.from('sales').select('monto'),
+      supabase.from('sales').select('cel_vendedor'),
     ])
 
     totalSales = count || 0
     totalRevenue = revenueData?.reduce((acc, sale) => acc + Number(sale.monto || 0), 0) || 0
     averageSale = totalSales > 0 ? totalRevenue / totalSales : 0
     uniqueSellers = new Set(sellersData?.map((s) => s.cel_vendedor).filter(Boolean) || []).size
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log('✅ Fallback completado:', {
+        totalSales,
+        totalRevenue,
+        averageSale,
+        uniqueSellers,
+        revenueRecords: revenueData?.length,
+        sellersRecords: sellersData?.length,
+      })
+    }
   }
 
   const stats = [

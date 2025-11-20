@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { getUserProfile } from '@/lib/dal'
 import type { SalesFilters } from '../ventas/actions'
+import { getPaymentMethodsByCompany } from '@/lib/companies'
 import * as XLSX from 'xlsx'
 
 export interface ExportOptions {
@@ -55,6 +56,20 @@ export async function exportSales(options: ExportOptions): Promise<ExportResult>
 
     if (options.filters.metodo_pago_1) {
       query = query.ilike('metodo_pago_1', `%${options.filters.metodo_pago_1}%`)
+    }
+
+    // Filtro por empresa (OVERSHARK, BRAVO'S, OTROS)
+    if (options.filters.empresa !== undefined && options.filters.empresa !== null && options.filters.empresa !== '') {
+      const paymentMethods = getPaymentMethodsByCompany(options.filters.empresa)
+
+      if (paymentMethods.length > 0) {
+        query = query.in('metodo_pago_1', paymentMethods)
+      } else if (options.filters.empresa === 'OTROS') {
+        const oversharkMethods = getPaymentMethodsByCompany('OVERSHARK')
+        const bravosMethods = getPaymentMethodsByCompany('BRAVOS')
+        const allKnownMethods = [...oversharkMethods, ...bravosMethods]
+        query = query.not('metodo_pago_1', 'in', `(${allKnownMethods.map(m => `"${m}"`).join(',')})`)
+      }
     }
 
     if (options.filters.region) {
@@ -216,6 +231,20 @@ export async function getSalesSummary(filters: SalesFilters) {
 
     if (filters.metodo_pago_1) {
       query = query.ilike('metodo_pago_1', `%${filters.metodo_pago_1}%`)
+    }
+
+    // Filtro por empresa (OVERSHARK, BRAVO'S, OTROS)
+    if (filters.empresa !== undefined && filters.empresa !== null && filters.empresa !== '') {
+      const paymentMethods = getPaymentMethodsByCompany(filters.empresa)
+
+      if (paymentMethods.length > 0) {
+        query = query.in('metodo_pago_1', paymentMethods)
+      } else if (filters.empresa === 'OTROS') {
+        const oversharkMethods = getPaymentMethodsByCompany('OVERSHARK')
+        const bravosMethods = getPaymentMethodsByCompany('BRAVOS')
+        const allKnownMethods = [...oversharkMethods, ...bravosMethods]
+        query = query.not('metodo_pago_1', 'in', `(${allKnownMethods.map(m => `"${m}"`).join(',')})`)
+      }
     }
 
     if (filters.region) {
