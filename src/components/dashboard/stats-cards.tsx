@@ -14,29 +14,38 @@ import {
 export async function StatsCards() {
   const supabase = await createClient()
 
-  // Obtener estadísticas en paralelo
-  const [
-    { count: totalSales },
-    { data: salesData },
-    { data: topSellers },
-  ] = await Promise.all([
-    supabase.from('sales').select('*', { count: 'exact', head: true }),
-    supabase.from('sales').select('monto').returns<{ monto: number }[]>(),
-    supabase
-      .from('sales')
-      .select('cel_vendedor')
-      .limit(1000)
-      .returns<{ cel_vendedor: string }[]>(),
-  ])
+  // Obtener todas las estadísticas usando agregaciones SQL
+  // Esto es más eficiente que traer todos los datos y calcular en el cliente
+  const { data: statsData, error } = await supabase.rpc('get_sales_stats')
 
-  // Calcular total de ingresos
-  const totalRevenue = salesData?.reduce((acc, sale) => acc + Number(sale.monto), 0) || 0
+  // Si falla el RPC o no existe, usar método alternativo
+  let totalSales = 0
+  let totalRevenue = 0
+  let averageSale = 0
+  let uniqueSellers = 0
 
-  // Calcular promedio de venta
-  const averageSale = totalSales && totalSales > 0 ? totalRevenue / totalSales : 0
+  if (!error && statsData) {
+    totalSales = statsData.total_sales || 0
+    totalRevenue = statsData.total_revenue || 0
+    averageSale = statsData.average_sale || 0
+    uniqueSellers = statsData.unique_sellers || 0
+  } else {
+    // Fallback: Obtener estadísticas usando consultas individuales
+    const [
+      { count },
+      { data: revenueData },
+      { data: sellersData },
+    ] = await Promise.all([
+      supabase.from('sales').select('*', { count: 'exact', head: true }),
+      supabase.from('sales').select('monto').limit(100000),
+      supabase.from('sales').select('cel_vendedor').limit(100000),
+    ])
 
-  // Contar vendedores únicos
-  const uniqueSellers = new Set(topSellers?.map((s) => s.cel_vendedor) || []).size
+    totalSales = count || 0
+    totalRevenue = revenueData?.reduce((acc, sale) => acc + Number(sale.monto || 0), 0) || 0
+    averageSale = totalSales > 0 ? totalRevenue / totalSales : 0
+    uniqueSellers = new Set(sellersData?.map((s) => s.cel_vendedor).filter(Boolean) || []).size
+  }
 
   const stats = [
     {
