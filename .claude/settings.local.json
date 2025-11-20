@@ -12,7 +12,8 @@
       "Bash(npm run build:*)",
       "Bash(src/types/database.types.new.ts)",
       "Bash(git fetch:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
