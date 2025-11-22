@@ -23,8 +23,8 @@ export const OVERSHARK_CONFIG: CompanyConfig = {
   color: '#0ea5e9', // Cyan
   paymentMethods: [
     // LIVE OVERSHARK
-    'L1-000',
-    'L2-378',
+    'L1/000',
+    'L2-X378',
     'L3-711',
     'L4-138',
     // PUBLICIDAD OVERSHARK
